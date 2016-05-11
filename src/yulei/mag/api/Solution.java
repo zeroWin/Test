@@ -90,8 +90,7 @@ public class Solution {
 		//apiuse.setAttributes("AA.AuId");
 		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		
-		//获取搜索结果
-		
+		//获取搜索结果	
         ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
         // 实体个数为0，或者搜到实体作者为0
         if(apiuse.GetEntitiesNumFromJson(searchResult) == 0 
@@ -355,9 +354,18 @@ public class Solution {
 		long st = System.nanoTime();
 		String result = "";
 
-
+		String expr = "JId="+id1;
+		apiuse.setExpr(expr);
+		//获取搜索结果
+        ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());		
 		
-		
+        int searchResultEntitiesSize = searchResult.entities.size();
+        while(searchResultEntitiesSize == 10000)
+        {
+        	
+        	searchResult = apiuse.HandleURI(apiuse.getURI());
+        	searchResultEntitiesSize = searchResult.entities.size();
+        }
 		
 		System.out.println("3-Hop-Rule2 end and total times ："+(System.nanoTime()-st));			
 		

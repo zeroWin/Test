@@ -68,7 +68,16 @@ public class APIuse {
 	public void setAttributes(String attributes){
 		this.builder.setParameter("attributes", attributes);
 	}		
-	
+
+	/**
+	 * 设置Uri的attributes变量
+	 * 该变量表示你要求返回什么数据
+	 * @author zero
+	 * @param uri
+	 */
+	public void setOffset(String offset){
+		this.builder.setParameter("offset", offset);
+	}	
 	/**
 	 * 获取前面配置好生成的uri地址
 	 * @return uri 生成uri地址

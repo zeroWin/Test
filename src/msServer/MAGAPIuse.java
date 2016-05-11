@@ -47,16 +47,18 @@ public class MAGAPIuse
     	 //获取搜索结果
          ResultJsonClass searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-         apiUse.showResultAsJsonFormat(searchResult);
+         //apiUse.showResultAsJsonFormat(searchResult);
 
          // 再次设定参数，会将前一次的覆盖
-         apiUse.setExpr("Id=2036218035");
+         apiUse.setExpr("RId=2036218035");
     	 //获取搜索结果
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-         apiUse.showResultAsJsonFormat(searchResult);         
+         //apiUse.showResultAsJsonFormat(searchResult);         
          
-         // 再次设定参数 
+         // 再次设定参数
+         apiUse.setExpr("Composite(AA.AuId=2251253715)");
+         apiUse.setOffset("1");
          apiUse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
          //获取搜索结果
          searchResult = apiUse.HandleURI(apiUse.getURI());
