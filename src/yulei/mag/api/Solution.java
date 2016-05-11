@@ -38,16 +38,20 @@ public class Solution {
 	public String IdToId_All(String id1,String id2)
 	{
 		String result = "";
-		
+
+		apiuse.setCount("10000");
+		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+		apiuse.setOffset("0");
 		// 1-hop
-		String path1Hop = IdToId_1Hop(id1, id2);
-		if(path1Hop.length() != 0)
-			result += "["+path1Hop+"]" + ",";
+//		String path1Hop = IdToId_1Hop(id1, id2);
+//		if(path1Hop.length() != 0)
+//			result += "["+path1Hop+"]" + ",";
 		
 		String expr = "Id="+id1;
 		apiuse.setExpr(expr);
-		apiuse.setCount("10000");
-		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+		
+//		apiuse.setCount("10000");
+//		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		
 		// Get id1 search result
         ResultJsonClass searchResultId = apiuse.HandleURI(apiuse.getURI());
@@ -62,9 +66,9 @@ public class Solution {
 		
 		
 		// 2-hop
-		String path2Hop = IdToId_2Hop(id1, id2,EntitiesId1,EntitiesId2);
-		if(path2Hop.length() != 0)
-			result += path2Hop + ",";
+//		String path2Hop = IdToId_2Hop(id1, id2,EntitiesId1,EntitiesId2);
+//		if(path2Hop.length() != 0)
+//			result += path2Hop + ",";
 		
 		// 3-hop
 		String path3Hop = IdToId_3Hop(id1,id2,EntitiesId1,EntitiesId2);
@@ -86,9 +90,9 @@ public class Solution {
 	public String IdToId_1Hop(String id1,String id2){
 		String expr = "And("+"Id="+id1+","+"RId="+id2+")";
 		apiuse.setExpr(expr);
-		apiuse.setCount("10000");
+		//apiuse.setCount("10000");
 		//apiuse.setAttributes("AA.AuId");
-		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+		//apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		
 		//获取搜索结果	
         ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
@@ -217,30 +221,69 @@ public class Solution {
 	 * @param id1 id1的编号
 	 * @param id2 id2的编号
 	 * @param list1 id1的所有Rid
-	 * @return
+	 * @return [1,2],[3,4],或""
 	 */
 	private String IdToId_2Hop_RId(String id1,String id2,List<String> list1){
 		System.out.println("2-Hop-RId start");
 		String result = "";
 		long st = System.nanoTime();
-
-		for(String string : list1)
+		int listLen = list1.size();
+		String searchTemp = "";
+		int flag = 0;
+		for(int i = 0; i < listLen; ++i)
 		{
-			String temp = IdToId_1Hop(string,id2);
-			if(temp.length() != 0) // 
-			{
-				temp = "[" + id1 + "," + temp+"]";
-				result += temp + ",";
-			}
-				
+			System.out.println(i);
+			if(flag == 0)
+    		{
+    			searchTemp = "Id="+list1.get(i);
+    			flag++;
+    		}
+			else // 有两个以上Id,加Or
+    		{
+    			searchTemp = addOr(searchTemp, "Id="+list1.get(i));
+    			flag++;
+    		}
+			
+	   		if(flag == 70) // 足够长了，搜索一次
+    		{
+    	    	// 加And
+    	    	searchTemp = addAnd(searchTemp, "RId="+id2);
+    	    	// 设置expr
+    	    	apiuse.setExpr(searchTemp);
+    	    	// 发送请求
+    	    	ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
+    	    	// 处理结果
+    	    	int searchResultSize = searchResult.entities.size();
+    	    	for(int j = 0; j < searchResultSize; ++j)
+    	    	{
+    	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
+    	    	}
+    	    	flag = 0;
+    	    	searchTemp = "";
+    		}
 		}
+    	if(flag != 0)	// 搜索最后一次
+    	{
+	    	// 加And
+	    	searchTemp = addAnd(searchTemp, "RId="+id2);
+	    	// 设置expr
+	    	apiuse.setExpr(searchTemp);
+	    	// 发送请求
+	    	ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
+	    	// 处理结果
+	    	int searchResultSize = searchResult.entities.size();
+	    	for(int j = 0; j < searchResultSize; ++j)
+	    	{
+	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
+	    	}
+    	}
 		System.out.println("2-Hop-RId end and total times ："+(System.nanoTime()-st));
 		
 		return result;
 	}
 	
 	/**
-	 * 找到链表1和链表2相同的RID
+	 * 找到链表1和链表2相同的AA.AuId
 	 * @param list1
 	 * @param list2
 	 * @return
@@ -287,13 +330,13 @@ public class Solution {
 		// 1.id1->id1.RId 找所有id1.RId到id2的2跳路径
 		if(EntitiesId1.RId != null && EntitiesId1.RId.size() != 0)
 		{
-			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
+//			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
 		}
 		
 		// 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2
 		if(EntitiesId1.J != null)
 		{
-			
+			result += IdToId_3Hop_Rule2(id1,id2,EntitiesId1.J.JId);
 		}
 		
 		// 返回结果
@@ -354,7 +397,7 @@ public class Solution {
 		long st = System.nanoTime();
 		String result = "";
 
-		String expr = "JId="+id1;
+		String expr = "Composite(J.JId="+JId+")";
 		apiuse.setExpr(expr);
 		//获取搜索结果
         ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());		
@@ -362,16 +405,105 @@ public class Solution {
         int searchResultEntitiesSize = searchResult.entities.size();
         while(searchResultEntitiesSize == 10000)
         {
-        	
+        	result += searchIdArrayToRId(id1,id2,searchResult);
         	searchResult = apiuse.HandleURI(apiuse.getURI());
         	searchResultEntitiesSize = searchResult.entities.size();
         }
-		
-		System.out.println("3-Hop-Rule2 end and total times ："+(System.nanoTime()-st));			
-		
-		
-		
+        
+        System.out.println("JId = "+JId+"论文数为："+searchResultEntitiesSize);
+        result += searchIdArrayToRId(id1,id2,searchResult);
+    	// 把所有[替换成[id1,JId,
+		result = result.replace("[", "["+id1+","+JId+",");
+		apiuse.setOffset("0");
+		System.out.println("3-Hop-Rule2 end and total times ："+(System.nanoTime()-st));	
 		return result;
+	}
+	
+	/**
+	 * 给字符串两边加Or
+	 * @param string1
+	 * @param string2
+	 * @return Or(string1,string2)
+	 */
+	public String addOr(String string1,String string2){
+		return "Or("+string1+","+string2+")";
+	}
+	
+	/**
+	 * 给字符串两边加And
+	 * @param string1
+	 * @param string2
+	 * @return And(string1,string2)
+	 */
+	public String addAnd(String string1,String string2){
+		return "And("+string1+","+string2+")";
+	}
+	
+	/**
+	 * 搜索多个id1是否RId为id2用该函数
+	 * @param id1
+	 * @param id2
+	 * @param resultJsonClass
+	 * @return [1,2],[2,3],或""
+	 */
+	public String searchIdArrayToRId(String id1,String id2,ResultJsonClass resultJsonClass){
+		String result ="";
 		
+		int searchResultEntitiesSize = resultJsonClass.entities.size();
+		int flag = 0;
+        Entities entitiesTemp;
+        String searchTemp="";
+    	for(int i = 0; i < searchResultEntitiesSize ; ++i)
+    	{
+    		System.out.println(i);
+    		entitiesTemp = resultJsonClass.entities.get(i);
+    		if(entitiesTemp.Id == id1 || entitiesTemp.Id == id2) // 是id1或id2 排除，之前已经找过
+    			continue;
+    		
+    		if(flag == 0)
+    		{
+    			searchTemp = "Id="+entitiesTemp.Id;
+    			flag++;
+    		}
+    		else // 有两个以上entitiesTemp.Id,加Or
+    		{
+    			searchTemp = addOr(searchTemp, "Id="+entitiesTemp.Id);
+    			flag++;
+    		}
+    		if(flag == 70) // 足够长了，搜索一次
+    		{
+    	    	// 加And
+    	    	searchTemp = addAnd(searchTemp, "RId="+id2);
+    	    	// 设置expr
+    	    	apiuse.setExpr(searchTemp);
+    	    	// 发送请求
+    	    	ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
+    	    	// 处理结果
+    	    	int searchResultSize = searchResult.entities.size();
+    	    	for(int j = 0; j < searchResultSize; ++j)
+    	    	{
+    	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
+    	    	}
+    	    	flag = 0;
+    	    	searchTemp = "";
+    		}
+    	}
+
+    	if(flag != 0)	// 搜索最后一次
+    	{
+	    	// 加And
+	    	searchTemp = addAnd(searchTemp, "RId="+id2);
+	    	// 设置expr
+	    	apiuse.setExpr(searchTemp);
+	    	// 发送请求
+	    	ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
+	    	// 处理结果
+	    	int searchResultSize = searchResult.entities.size();
+	    	for(int j = 0; j < searchResultSize; ++j)
+	    	{
+	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
+	    	}
+    	}
+		return result;
 	}
 }

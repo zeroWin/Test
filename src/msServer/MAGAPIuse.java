@@ -57,15 +57,21 @@ public class MAGAPIuse
          //apiUse.showResultAsJsonFormat(searchResult);         
          
          // 再次设定参数
-         apiUse.setExpr("Composite(AA.AuId=2251253715)");
-         apiUse.setOffset("1");
+         apiUse.setExpr("RId=2036218035");
+         apiUse.setOffset("0");
+         apiUse.setCount("10");
          apiUse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
          //获取搜索结果
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-         apiUse.showResultAsJsonFormat(searchResult);          
+         //apiUse.showResultAsJsonFormat(searchResult);    
          
+         apiUse.setExpr("And(Or(Or(Id=202305081,Id=2080957042),Id=2114916153),RId=2036218035)");
+         searchResult = apiUse.HandleURI(apiUse.getURI());
+         // 显示结果
+         apiUse.showResultAsJsonFormat(searchResult);             
          // 直接通过searchResult获取结果的方法
+         System.out.println(searchResult.entities.size());
          System.out.println(searchResult.expr);
          System.out.println(searchResult.entities.get(0).logprob);
          System.out.println(searchResult.entities.get(0).Id);

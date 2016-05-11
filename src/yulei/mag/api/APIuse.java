@@ -106,6 +106,7 @@ public class APIuse {
 	        if (entity != null) 
 	        {
 	        	 String result = EntityUtils.toString(entity);
+	        	 //System.out.println(result);
 	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
 	        }
 		}
