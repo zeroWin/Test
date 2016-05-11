@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="apache_jar/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="apache_jar/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/fluent-hc-4.5.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpclient-4.5.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpclient-cache-4.5.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpclient-win-4.5.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpcore-4.4.4.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpcore-ab-4.4.4.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpcore-nio-4.4.4.jar"/>
+	<classpathentry kind="lib" path="apache_jar/httpmime-4.5.2.jar"/>
+	<classpathentry kind="lib" path="apache_jar/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="apache_jar/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="gson-gson-parent-2.6.2/gson-2.6.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
