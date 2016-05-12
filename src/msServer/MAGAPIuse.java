@@ -22,22 +22,26 @@ public class MAGAPIuse
      gsonBuilder.setPrettyPrinting().serializeNulls();
      try
      {
-//         URIBuilder builder = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
-//         
-//
-//         builder.setParameter("expr", "RId=2140251882");
-//         // 同时搜多个的方法
-//         //builder.setParameter("expr", "Composite(AA.AuId=2251253715)");
-//         //builder.setParameter("expr", "And(Composite(AA.AuId=2294766364),Id=2140251882)");
-//         //builder.setParameter("expr", "Or(RId=2143554828,Id=2140251882)");
+         URIBuilder builder = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
+         
+
+         builder.setParameter("expr", "Id=2140251882");
+         // 同时搜多个的方法
+         //builder.setParameter("expr", "Composite(AA.AuId=2251253715)");
+         //builder.setParameter("expr", "And(Composite(AA.AuId=2294766364),Id=2140251882)");
+         //builder.setParameter("expr", "Or(RId=2143554828,Id=2140251882)");
 //         builder.setParameter("count", "10000");
-//         //builder.setParameter("attributes", "Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
-//         builder.setParameter("attributes", "Id");
+//         builder.setParameter("attributes", "Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+//         //builder.setParameter("attributes", "Id");
 //         builder.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
 //         //builder.setParameter("orderby","Id:asc");
 //         URI uri = builder.build();
-//         ResultJsonClass searchResult1 = apiUse.HandleURI(uri);
-//         apiUse.showResultAsJsonFormat(searchResult1);
+//         long st = System.nanoTime();
+////         ResultJsonClass searchResult1= apiUse.HandleURI(uri);
+//         for(int i =0;i<10000;++i)
+//        	 apiUse.HandleURI(uri);
+//         System.out.println("times ："+(System.nanoTime()-st));	
+////         apiUse.showResultAsJsonFormat(searchResult1);
          
          
     	 // 这三个参数必须设置
@@ -59,17 +63,17 @@ public class MAGAPIuse
          // 再次设定参数
          apiUse.setExpr("RId=2036218035");
          apiUse.setOffset("0");
-         apiUse.setCount("10");
-         apiUse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+         apiUse.setCount("10000");
+         apiUse.setAttributes("Id");
          //获取搜索结果
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
          //apiUse.showResultAsJsonFormat(searchResult);    
          
-         apiUse.setExpr("Composite(AA.AuId=2150193107)");
+         apiUse.setExpr("And(Composite(F.FId=41008148),RId=2147152072)");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-         apiUse.showResultAsJsonFormat(searchResult);             
+//         apiUse.showResultAsJsonFormat(searchResult);             
          // 直接通过searchResult获取结果的方法
          System.out.println(searchResult.entities.size());
          System.out.println(searchResult.expr);

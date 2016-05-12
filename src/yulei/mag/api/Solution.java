@@ -318,11 +318,11 @@ public class Solution {
 	/* 下面代码为3-hop 判断相关代码 */
 	/**
 	 * 用来判断所有规则 找到所有id1到id2的3跳路径
-	 * 1.id1->id1.RId 找所有id1.RId到id2的2跳路径
-	 * 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2
-	 * 3.id1->id1.CId->step1：找出该会议的所有论文->step2：判断这些论文是否引用id2
-	 * 4.id1->id1.FId->step1：找出领域的所有论文 ->step2:判断这些论文是否引用id2
-	 * 5.id1->id1.AA.AuId->step1：找出作者写的所有论文->step：判断这些论文是否引用id2
+	 * 1.id1->id1.RId 找所有id1.RId到id2的2跳路径 1
+	 * 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2 6，7
+	 * 3.id1->id1.CId->step1：找出该会议的所有论文->step2：判断这些论文是否引用id2 4，5
+	 * 4.id1->id1.FId->step1：找出领域的所有论文 ->step2:判断这些论文是否引用id2 2，3
+	 * 5.id1->id1.AA.AuId->step1：找出作者写的所有论文->step：判断这些论文是否引用id2 10，11
 	 * @param id1
 	 * @param id2
 	 * @return
@@ -335,24 +335,24 @@ public class Solution {
 		// 1.id1->id1.RId 找所有id1.RId到id2的2跳路径
 		if(EntitiesId1.RId != null && EntitiesId1.RId.size() != 0)
 		{
-//			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
+			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
 		}
 		
 		// 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2
 		if(EntitiesId1.J != null)
 		{
-//			result += IdToId_3Hop_Rule2(id1,id2,EntitiesId1.J.JId);
+			result += IdToId_3Hop_Rule2(id1,id2,EntitiesId1.J.JId);
 		}
 		
 		// 3.id1->id1.CId->step1：找出该会议的所有论文->step2：判断这些论文是否引用id2
 		if(EntitiesId1.C != null)
 		{
-//			result += IdToId_3Hop_Rule3(id1,id2,EntitiesId1.C.CId);
+			result += IdToId_3Hop_Rule3(id1,id2,EntitiesId1.C.CId);
 		}
 		
 		// 4.id1->id1.FId->step1：找出领域的所有论文 ->step2:判断这些论文是否引用id2
 		if(EntitiesId1.F != null && EntitiesId1.F.size() != 0){
-//			result += IdToId_3Hop_Rule4(id1,id2,EntitiesId1.F);
+			result += IdToId_3Hop_Rule4(id1,id2,EntitiesId1.F);
 		}
 		
 		// 5.id1->id1.AA.AuId->step1：找出作者写的所有论文->step：判断这些论文是否引用id2
@@ -493,7 +493,7 @@ public class Solution {
 	
 	/**
 	 * 使用规则4判断是否有3跳路径,待提高效率
-	 * 规则4.id1->id1.FId->step1：找出论文所属领域的所有论文->step2：判断这些论文是否引用id2
+	 * 规则4.id1->id1.FId->step1：找引用id2且F.Fid为id1.FId的论文
 	 * @return [id1,F.FId,3,id2],[id1,F.FId,4,id2], 或者 ""
 	 */
 	public String IdToId_3Hop_Rule4(String id1,String id2,List<Field> field){
@@ -501,14 +501,17 @@ public class Solution {
 		long st = System.nanoTime();
 		int numSearch = 0;
 		String result = "";
+		String result_temp = "";
 		String expr = "";
+		
+		// 找到所有引用了id2的论文，默认一篇论文不会被5万篇论文引用
 		apiuse.setAttributes("Id");
 		System.out.println("领域个数："+field.size());
 		for(int i = 0;i< field.size(); ++i) // 一个个搜
 		{
 			expr = field.get(i).FId;
 			System.out.println("第"+i+"个领域搜索中..."+expr);
-			expr = "Composite(F.FId="+expr+")";
+			expr = "And(Composite(F.FId="+expr+"),RId="+id2+")";
 			apiuse.setExpr(expr);
 			//获取搜索结果
 			long st1 = System.nanoTime();
@@ -517,23 +520,39 @@ public class Solution {
 	        int searchResultEntitiesSize = searchResult.entities.size();
 	        while(searchResultEntitiesSize == 50000)
 	        {
-	        	System.out.println("FId 论文数为："+searchResultEntitiesSize);
-	        	result += searchIdArrayToRId(id1,id2,searchResult);
-	        	numSearch++;
+	        	System.out.println("FId="+field.get(i).FId+
+	        			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
 	        	
+	        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
+	        	{
+	        		if(searchResult.entities.get(j).Id == id1) //排除id1
+	        			continue;
+	        		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
+	        	}
 	        	// 再次设定参数搜索
 	        	apiuse.setOffset(String.valueOf(numSearch*50000));
-	        	apiuse.setExpr(expr);
+	        	// 再次搜索
 	        	st1 = System.nanoTime();
 	        	searchResult = apiuse.HandleURI(apiuse.getURI());
 	        	System.out.println("3-Hop-Rule4 搜索时间 ："+(System.nanoTime()-st1));
 	        	searchResultEntitiesSize = searchResult.entities.size();
 	        }
 	        
-	        System.out.println("FId 论文数为："+searchResultEntitiesSize);
-	        result += searchIdArrayToRId(id1,id2,searchResult);
+        	System.out.println("FId="+field.get(i).FId+
+        			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+        	
+        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
+        	{
+        		if(searchResult.entities.get(j).Id == id1) //排除id1
+        			continue;
+        		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
+        	}
 	    	// 把所有[替换成[id1,
-			result = result.replace("[", "["+id1+","+field.get(i).FId+",");
+        	result_temp = result_temp.replace("[", "["+id1+","+field.get(i).FId+",");
+        	result += result_temp;
+//			System.out.println(result_temp);
+			result_temp = "";
+			
 		
 		}
 		apiuse.setOffset("0");
@@ -633,7 +652,7 @@ public class Solution {
         String searchTemp="";
     	for(int i = 0; i < searchResultEntitiesSize ; ++i)
     	{
-    		//System.out.println(i);
+//    		System.out.println(i);
     		entitiesTemp = resultJsonClass.entities.get(i);
     		if(entitiesTemp.Id == id1 || entitiesTemp.Id == id2) // 是id1或id2 排除，之前已经找过
     			continue;
