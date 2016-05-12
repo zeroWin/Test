@@ -35,6 +35,7 @@ public class Server {
 			// 解析url并获取id1和id2
 			String response = "";
 			String strUrlParam = new String(httpExchange.getRequestURI().getQuery());
+			System.out.println("输入为："+strUrlParam);
 			String[] arrSplit = strUrlParam.split("&");
 			String id1 = arrSplit[0].split("=")[1];
 			String id2 = arrSplit[1].split("=")[1];
@@ -44,7 +45,6 @@ public class Server {
 			IDtype id1Type,id2Type;
 			id1Type = apiuse.GetIdType(id1);
 			id2Type = apiuse.GetIdType(id2);
-			
 			
 			// 处理算法
 			long st = System.nanoTime();

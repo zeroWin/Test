@@ -387,6 +387,8 @@ public class Solution {
 		for(String string : ID1_RIdlist)
 		{
 			System.out.println("tttt:"+string);
+			if(string.equals(id2)) // 参考文献是id2 退出
+				continue;
 	        // Get string search result
 			String expr = "Id="+string;
 			apiuse.setExpr(expr);
@@ -438,7 +440,7 @@ public class Solution {
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
-        		if(searchResult.entities.get(j).Id == id1) //排除id1
+        		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
         			continue;
         		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
         	}
@@ -454,7 +456,7 @@ public class Solution {
     	
     	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
     	{
-    		if(searchResult.entities.get(j).Id == id1) //排除id1
+    		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
     			continue;
     		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
     	}
@@ -491,7 +493,7 @@ public class Solution {
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
-        		if(searchResult.entities.get(j).Id == id1) //排除id1
+        		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
         			continue;
         		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
         	}
@@ -508,7 +510,7 @@ public class Solution {
     	
     	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
     	{
-    		if(searchResult.entities.get(j).Id == id1) //排除id1
+    		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
     			continue;
     		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
     	}
@@ -555,7 +557,7 @@ public class Solution {
 	        	
 	        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
 	        	{
-	        		if(searchResult.entities.get(j).Id == id1) //排除id1
+	        		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
 	        			continue;
 	        		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
 	        	}
@@ -573,7 +575,7 @@ public class Solution {
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
-        		if(searchResult.entities.get(j).Id == id1) //排除id1
+        		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
         			continue;
         		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
         	}
@@ -628,7 +630,7 @@ public class Solution {
 	        	
 	        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
 	        	{
-	        		if(searchResult.entities.get(j).Id == id1) //排除id1
+	        		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
 	        			continue;
 	        		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
 	        	}
@@ -646,7 +648,7 @@ public class Solution {
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
-        		if(searchResult.entities.get(j).Id == id1) //排除id1
+        		if(searchResult.entities.get(j).Id.equals(id1)) //排除id1
         			continue;
         		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
         	}
@@ -701,7 +703,7 @@ public class Solution {
     	{
 //    		System.out.println(i);
     		entitiesTemp = resultJsonClass.entities.get(i);
-    		if(entitiesTemp.Id == id1 || entitiesTemp.Id == id2) // 是id1或id2 排除，之前已经找过
+    		if(entitiesTemp.Id.equals(id1) || entitiesTemp.Id.equals(id2)) // 是id1或id2 排除，之前已经找过
     			continue;
     		
     		if(flag == 0)
