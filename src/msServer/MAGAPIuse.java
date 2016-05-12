@@ -66,7 +66,7 @@ public class MAGAPIuse
          // 显示结果
          //apiUse.showResultAsJsonFormat(searchResult);    
          
-         apiUse.setExpr("Composite(AA.AuId=2251253715)");
+         apiUse.setExpr("Composite(AA.AuId=2150193107)");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
          apiUse.showResultAsJsonFormat(searchResult);             
