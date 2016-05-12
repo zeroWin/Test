@@ -60,7 +60,7 @@ public class MAGAPIuse
          apiUse.setExpr("RId=2036218035");
          apiUse.setOffset("0");
          apiUse.setCount("10");
-         apiUse.setAttributes("Id,Ti,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+         apiUse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
          //获取搜索结果
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果

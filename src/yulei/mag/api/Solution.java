@@ -39,7 +39,7 @@ public class Solution {
 	{
 		String result = "";
 
-		apiuse.setCount("10000");
+		apiuse.setCount("50000");
 		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		apiuse.setOffset("0");
 		// 1-hop
@@ -334,20 +334,26 @@ public class Solution {
 		// 1.id1->id1.RId 找所有id1.RId到id2的2跳路径
 		if(EntitiesId1.RId != null && EntitiesId1.RId.size() != 0)
 		{
-			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
+//			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
 		}
 		
 		// 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2
 		if(EntitiesId1.J != null)
 		{
-			result += IdToId_3Hop_Rule2(id1,id2,EntitiesId1.J.JId);
+//			result += IdToId_3Hop_Rule2(id1,id2,EntitiesId1.J.JId);
 		}
 		
 		// 3.id1->id1.CId->step1：找出该会议的所有论文->step2：判断这些论文是否引用id2
 		if(EntitiesId1.C != null)
 		{
-			result += IdToId_3Hop_Rule3(id1,id2,EntitiesId1.C.CId);
+//			result += IdToId_3Hop_Rule3(id1,id2,EntitiesId1.C.CId);
 		}
+		
+		// 4.id1->id1.FId->step1：找出领域的所有论文 ->step2:判断这些论文是否引用id2
+		if(EntitiesId1.F != null && EntitiesId1.F.size() != 0){
+			result += IdToId_3Hop_Rule4(id1,id2,EntitiesId1.F);
+		}
+		
 		System.out.println("3-Hop end and total times ："+(System.nanoTime()-st));
 		// 返回结果
 		int t = result.length();
@@ -409,7 +415,7 @@ public class Solution {
 		String result = "";
 		String expr = "Composite(J.JId="+JId+")";
 		apiuse.setExpr(expr);
-		//apiuse.setAttributes("Id");
+		apiuse.setAttributes("Id");
 		//获取搜索结果
         ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());		
 		
@@ -430,7 +436,7 @@ public class Solution {
     	// 把所有[替换成[id1,JId,
 		result = result.replace("[", "["+id1+","+JId+",");
 		apiuse.setOffset("0");
-		//apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		System.out.println("3-Hop-Rule2 end and total times ："+(System.nanoTime()-st));	
 		return result;
 	}
@@ -448,7 +454,7 @@ public class Solution {
 		
 		String expr = "Composite(C.CId="+CId+")";
 		apiuse.setExpr(expr);
-//		apiuse.setAttributes("Id");
+		apiuse.setAttributes("Id");
 		//获取搜索结果
         ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());		
 		
@@ -470,10 +476,64 @@ public class Solution {
     	// 把所有[替换成[id1,JId,
 		result = result.replace("[", "["+id1+","+CId+",");
 		apiuse.setOffset("0");
-//		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		System.out.println("3-Hop-Rule3 end and total times ："+(System.nanoTime()-st));	
 		return result;
 	}
+	
+	
+	/**
+	 * 使用规则4判断是否有3跳路径
+	 * 规则4.id1->id1.FId->step1：找出论文所属领域的所有论文->step2：判断这些论文是否引用id2
+	 * @return [id1,F.FId,3,id2],[id1,F.FId,4,id2], 或者 ""
+	 */
+	public String IdToId_3Hop_Rule4(String id1,String id2,List<Field> field){
+		System.out.println("3-Hop-Rule4 start");
+		long st = System.nanoTime();
+		int numSearch = 0;
+		String result = "";
+		String expr = "";
+		apiuse.setAttributes("Id");
+		System.out.println("领域个数："+field.size());
+		for(int i = 0;i< field.size(); ++i) // 一个个搜
+		{
+			expr = field.get(i).FId;
+			System.out.println("第"+i+"个领域搜索中..."+expr);
+			expr = "Composite(F.FId="+expr+")";
+			apiuse.setExpr(expr);
+			//获取搜索结果
+			long st1 = System.nanoTime();
+	        ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());		
+	        System.out.println("3-Hop-Rule4 搜索时间 ："+(System.nanoTime()-st1));	
+	        int searchResultEntitiesSize = searchResult.entities.size();
+	        while(searchResultEntitiesSize == 50000)
+	        {
+	        	System.out.println("FId 论文数为："+searchResultEntitiesSize);
+	        	result += searchIdArrayToRId(id1,id2,searchResult);
+	        	numSearch++;
+	        	
+	        	// 再次设定参数搜索
+	        	apiuse.setOffset(String.valueOf(numSearch*50000));
+	        	apiuse.setExpr(expr);
+	        	st1 = System.nanoTime();
+	        	searchResult = apiuse.HandleURI(apiuse.getURI());
+	        	System.out.println("3-Hop-Rule4 搜索时间 ："+(System.nanoTime()-st1));
+	        	searchResultEntitiesSize = searchResult.entities.size();
+	        }
+	        
+	        System.out.println("FId 论文数为："+searchResultEntitiesSize);
+	        result += searchIdArrayToRId(id1,id2,searchResult);
+	    	// 把所有[替换成[id1,
+			result = result.replace("[", "["+id1+","+field.get(i).FId+",");
+		
+		}
+		apiuse.setOffset("0");
+		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");	
+		System.out.println("3-Hop-Rule4 end and total times ："+(System.nanoTime()-st));	
+		return result;
+	}
+	
+	
 	/**
 	 * 给字符串两边加Or
 	 * @param string1
