@@ -218,9 +218,9 @@ public class APIuse {
 	        builder.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
 	
 	        URI uri = builder.build();
-	        ResultJsonClass resultJsonClass = HandleURI(uri);
+	        ResultJsonClass resultJsonClass = HandleURI(uri);  
 	        // 搜索ID得不到结果或者搜索到的ID里面的作者是空的
-	        if(resultJsonClass.entities.size() == 0 || resultJsonClass.entities.get(0).AA == null
+	        if(resultJsonClass.entities == null || resultJsonClass.entities.size() == 0 || resultJsonClass.entities.get(0).AA == null
 	        		|| resultJsonClass.entities.get(0).AA.size() == 0)
 	        {
 	        	idType = IDtype.AA_AuId;

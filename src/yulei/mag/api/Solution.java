@@ -126,7 +126,7 @@ public class Solution {
 		
 		// 判断JID 期刊 规则6，7
 		System.out.println("ID1->JId->ID2:");
-		if(EntitiesId1.J != null && EntitiesId2.J != null && EntitiesId1.J.JId == EntitiesId2.J.JId)
+		if(EntitiesId1.J != null && EntitiesId2.J != null && EntitiesId1.J.JId.equals(EntitiesId2.J.JId))
 		{
 			String temp = "["+id1+","+EntitiesId1.J.JId+","+id2+"],";
 			result += temp;
@@ -135,7 +135,7 @@ public class Solution {
 		
 		// 判断CID 会议 规则4，5
 		System.out.println("ID1->CId->ID2:");
-		if(EntitiesId1.C != null && EntitiesId2.C != null && EntitiesId1.C.CId == EntitiesId2.C.CId)
+		if(EntitiesId1.C != null && EntitiesId2.C != null && EntitiesId1.C.CId.equals(EntitiesId2.C.CId))
 		{
 			String temp = "["+id1+","+EntitiesId1.C.CId+","+id2+"],";
 			result += temp;
@@ -244,7 +244,7 @@ public class Solution {
     			flag++;
     		}
 			
-	   		if(flag == 70) // 足够长了，搜索一次
+	   		if(flag == 50) // 足够长了，搜索一次
     		{
     	    	// 加And
     	    	searchTemp = addAnd(searchTemp, "RId="+id2);
@@ -277,6 +277,8 @@ public class Solution {
 	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
 	    	}
     	}
+    	result  = result.replace("[","["+id1+",");
+//		System.out.println("替换后:"+temp);
 		System.out.println("2-Hop-RId end and total times ："+(System.nanoTime()-st));
 		
 		return result;
@@ -432,7 +434,7 @@ public class Solution {
         while(searchResultEntitiesSize == 50000)
         {
         	System.out.println("JId="+JId+
-        			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+        			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
@@ -448,7 +450,7 @@ public class Solution {
         }
         
     	System.out.println("JId="+JId+
-    			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+    			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
     	
     	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
     	{
@@ -485,7 +487,7 @@ public class Solution {
         while(searchResultEntitiesSize == 50000)
         {
         	System.out.println("CId="+CId+
-        			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+        			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
@@ -502,7 +504,7 @@ public class Solution {
         }
         
     	System.out.println("CId="+CId+
-    			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+    			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
     	
     	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
     	{
@@ -549,7 +551,7 @@ public class Solution {
 	        while(searchResultEntitiesSize == 50000)
 	        {
 	        	System.out.println("FId="+field.get(i).FId+
-	        			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+	        			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
 	        	
 	        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
 	        	{
@@ -567,7 +569,7 @@ public class Solution {
 	        }
 	        
         	System.out.println("FId="+field.get(i).FId+
-        			"且引用了id2"+id2+"的论文数为："+searchResultEntitiesSize);
+        			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
         	
         	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
         	{
@@ -594,7 +596,7 @@ public class Solution {
 	 * 使用规则5判断是否有3跳路径,待提高效率
 	 * 其实找作者写的论文的时候就把所有的论文的RId都找出来了，也就没必要再搜一次了
 	 * 考虑从这方面优化
-	 * 规则5.id1->id1.AA.AuId->step1：找出作者写的所有论文->step：判断这些论文是否引用id2
+	 * 规则5.id1->id1.AA.AuId->找到是这个作者且引用了id2的论文数
 	 * @return [id1,F.FId,3,id2],[id1,F.FId,4,id2], 或者 ""
 	 */
 	public String IdToId_3Hop_Rule5(String id1,String id2,List<Author>  AA_Info){
@@ -602,40 +604,57 @@ public class Solution {
 		long st = System.nanoTime();
 		int numSearch = 0;
 		String result = "";
+		String result_temp = "";
 		String expr = "";
+		
+		// 找到所有引用了id2且作者为AA.AuId的论文
 		apiuse.setAttributes("Id");
 		System.out.println("作者个数："+AA_Info.size());
 		for(int i = 0;i< AA_Info.size(); ++i) // 一个个搜
 		{
 			expr = AA_Info.get(i).AuId;
 			System.out.println("第"+i+"个作者搜索中..."+expr);
-			expr = "Composite(AA.AuId="+expr+")";
+			expr = "And(Composite(AA.AuId="+expr+"),RId="+id2+")";
 			apiuse.setExpr(expr);
 			//获取搜索结果
 			long st1 = System.nanoTime();
 	        ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());		
-	        System.out.println("3-Hop-Rule5搜索时间 ："+(System.nanoTime()-st1));	
+	        System.out.println("3-Hop-Rule5 搜索时间 ："+(System.nanoTime()-st1));	
 	        int searchResultEntitiesSize = searchResult.entities.size();
 	        while(searchResultEntitiesSize == 50000)
 	        {
-	        	System.out.println("AA.AuId 论文数为："+searchResultEntitiesSize);
-	        	result += searchIdArrayToRId(id1,id2,searchResult);
-	        	numSearch++;
+	        	System.out.println("AuId="+AA_Info.get(i).AuId+
+	        			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
 	        	
+	        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
+	        	{
+	        		if(searchResult.entities.get(j).Id == id1) //排除id1
+	        			continue;
+	        		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
+	        	}
 	        	// 再次设定参数搜索
 	        	apiuse.setOffset(String.valueOf(numSearch*50000));
-	        	apiuse.setExpr(expr);
+	        	// 再次搜索
 	        	st1 = System.nanoTime();
 	        	searchResult = apiuse.HandleURI(apiuse.getURI());
 	        	System.out.println("3-Hop-Rule5 搜索时间 ："+(System.nanoTime()-st1));
 	        	searchResultEntitiesSize = searchResult.entities.size();
 	        }
 	        
-	        System.out.println("AA.AuId 论文数为："+searchResultEntitiesSize);
-	        result += searchIdArrayToRId(id1,id2,searchResult);
+        	System.out.println("AuId="+AA_Info.get(i).AuId+
+        			"且引用了id2:"+id2+"的论文数为："+searchResultEntitiesSize);
+        	
+        	for(int j = 0; j< searchResultEntitiesSize; ++j)// 合成结果
+        	{
+        		if(searchResult.entities.get(j).Id == id1) //排除id1
+        			continue;
+        		result_temp += "["+searchResult.entities.get(j).Id+","+id2+"],";
+        	}
 	    	// 把所有[替换成[id1,
-			result = result.replace("[", "["+id1+","+AA_Info.get(i).AuId+",");
-		
+        	result_temp = result_temp.replace("[", "["+id1+","+AA_Info.get(i).AuId+",");
+        	result += result_temp;
+//			System.out.println(result_temp);
+			result_temp = "";
 		}
 		apiuse.setOffset("0");
 		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");	

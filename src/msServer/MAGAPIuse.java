@@ -56,24 +56,28 @@ public class MAGAPIuse
          // 再次设定参数，会将前一次的覆盖
          apiUse.setExpr("RId=2036218035");
     	 //获取搜索结果
-         searchResult = apiUse.HandleURI(apiUse.getURI());
+         //searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
          //apiUse.showResultAsJsonFormat(searchResult);         
          
          // 再次设定参数
          apiUse.setExpr("RId=2036218035");
          apiUse.setOffset("0");
-         apiUse.setCount("10000");
+         apiUse.setCount("100000");
          apiUse.setAttributes("Id");
          //获取搜索结果
-         searchResult = apiUse.HandleURI(apiUse.getURI());
+         //searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
          //apiUse.showResultAsJsonFormat(searchResult);    
          
-         apiUse.setExpr("And(Composite(F.FId=41008148),RId=2147152072)");
+         //apiUse.setExpr("And(Composite(F.FId=41008148),RId=2147152072)");
+         //apiUse.setExpr("Id=2310280492");
+         //apiUse.setExpr("Id=2332023333");
+         apiUse.setExpr("Id=2332023333");
+         apiUse.setAttributes("Id,F.FId,J.JId,C.CId,Ti,AA.AuId,AA.AfId,RId");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-//         apiUse.showResultAsJsonFormat(searchResult);             
+         apiUse.showResultAsJsonFormat(searchResult);             
          // 直接通过searchResult获取结果的方法
          System.out.println(searchResult.entities.size());
          System.out.println(searchResult.expr);
