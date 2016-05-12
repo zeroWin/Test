@@ -92,6 +92,8 @@ public class APIuse {
 		}
 		return uri;
 	}
+	
+	
 	public ResultJsonClass HandleURI(URI uri){
 		ResultJsonClass searchResult = null;
 		Gson gson = new Gson();
@@ -106,7 +108,7 @@ public class APIuse {
 	        if (entity != null) 
 	        {
 	        	 String result = EntityUtils.toString(entity);
-	        	 //System.out.println(result);
+//	        	 System.out.println(result);
 	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
 	        }
 		}
@@ -218,7 +220,8 @@ public class APIuse {
 	        URI uri = builder.build();
 	        ResultJsonClass resultJsonClass = HandleURI(uri);
 	        // 搜索ID得不到结果或者搜索到的ID里面的作者是空的
-	        if(resultJsonClass.entities.size() == 0 || resultJsonClass.entities.get(0).AA == null)
+	        if(resultJsonClass.entities.size() == 0 || resultJsonClass.entities.get(0).AA == null
+	        		|| resultJsonClass.entities.get(0).AA.size() == 0)
 	        {
 	        	idType = IDtype.AA_AuId;
 	        	System.out.println(Id+"类型为：AA_AuId");
