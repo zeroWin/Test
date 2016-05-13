@@ -13,13 +13,11 @@ import yulei.mag.api.ResultJsonClass.Entities;
 import yulei.mag.api.ResultJsonClass.Field;
 import yulei.mag.api.ReturnResult;
 
-public class Solution {
+public class SolutionIdToId {
 	public static APIuse apiuse;
 	public static ReturnResult returnResult;
-	public static JsonArray jsonstr;
-	public Solution(){
+	public SolutionIdToId(){
 		apiuse = new APIuse();
-		jsonstr = new JsonArray();
 	};
 //	public static void main(String[] args) {
 //		// TODO Auto-generated method stub
@@ -756,8 +754,5 @@ public class Solution {
 		return result;
 	}
 	
-	public  JsonArray getJsonArray(){
-		return Solution.jsonstr;
-	}
 	
 }

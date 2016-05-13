@@ -4,24 +4,29 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-import com.google.gson.JsonArray;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import yulei.mag.api.APIuse;
 import yulei.mag.api.APIuse.IDtype;
-import yulei.mag.api.Solution;
+import yulei.mag.api.SolutionAuIdToAuId;
+import yulei.mag.api.SolutionIdToId;
 
 /*
  * a simple static http server
  */
 public class Server {
 
-	private static Solution solution;
+	private static SolutionIdToId solutionIdToId;
+	private static SolutionAuIdToAuId solutionAuIdToAuId;
+	private static APIuse apiuse;
 	
 	public static void main(String[] args) throws Exception {
-		solution = new Solution();
+		solutionIdToId = new SolutionIdToId();
+		solutionAuIdToAuId = new SolutionAuIdToAuId();
+		apiuse = new APIuse();
 		HttpServer server = HttpServer.create(new InetSocketAddress(80), 0);
 		server.createContext("/Bupt", new MyHandler());
 		server.setExecutor(null); // creates a default executor
@@ -52,11 +57,7 @@ public class Server {
 				id2 = arrSplitId1[1];				
 			}
 			
-//			for(String s : httpExchange.getRequestHeaders().keySet()){
-//				System.out.print(httpExchange.getRequestHeaders().get(s));
-//			}
 			// 获取并显示id1和id2的类型			
-			APIuse apiuse = new APIuse();
 			IDtype id1Type,id2Type;
 			id1Type = apiuse.GetIdType(id1);
 			id2Type = apiuse.GetIdType(id2);
@@ -67,13 +68,16 @@ public class Server {
 			{
 				if(id1Type == IDtype.ID) // 两个都是ID
 				{
-					response = solution.IdToId_All(id1, id2);
+//					response = "[["+id1+","+id2+"]]";
 					
+					response = solutionIdToId.IdToId_All(id1, id2);
 					response = "["+response+"]";
 				}
 				else // 两个都是AA.AuId
 				{
 					response = "[["+id1+","+id2+"]]";
+//					response = solutionAuIdToAuId.AuIdToAuId_All(id1, id2);
+//					response = "["+response+"]";
 				}
 			}
 			else // 一个是ID，一个是AA.AuId

@@ -26,12 +26,22 @@ public class APIuse {
 	private URIBuilder builder;
 	private HttpClient httpclient;
 	private HttpResponse response;
+	private URIBuilder builderForType;
+	
 	public APIuse(){
 	     try
 	     {
 	         this.builder = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
 	         this.builder.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
 	         this.httpclient = HttpClients.createDefault();
+	         
+	         
+	         this.builderForType = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
+	         this.builderForType.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
+		     this.builderForType.setParameter("count", "10000");
+		     this.builderForType.setParameter("attributes", "AA.AuId,AA.AfId");
+		     
+		     HandleURI(new URI("https://oxfordhk.azure-api.net/academic/v1.0/evaluate?expr=Id=2140251882&count=10000&attributes=Id,AA.AuId,AA.AfId,F.FId,J.JId,C.CId,RId&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6"));
 	     }
 	     catch (Exception e)
 	     {
@@ -210,15 +220,12 @@ public class APIuse {
 		IDtype idType = IDtype.ID;
 		try
 		{
-	        URIBuilder builder = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
-	        // 同时搜多个的方法
-	        builder.setParameter("expr", "Id="+Id);
-	        builder.setParameter("count", "10000");
-	        builder.setParameter("attributes", "AA.AuId,AA.AfId");
-	        builder.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
-	
-	        URI uri = builder.build();
-	        ResultJsonClass resultJsonClass = HandleURI(uri);  
+
+			String uri = "https://oxfordhk.azure-api.net/academic/v1.0/evaluate?count=10000&attributes=AA.AuId,AA.AfId&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6";
+			uri = uri + "&expr=Id="+Id;
+//			long st = System.nanoTime();
+			ResultJsonClass resultJsonClass = HandleURI(new URI(uri));
+//			System.out.println("Search times "+(System.nanoTime()-st));
 	        // 搜索ID得不到结果或者搜索到的ID里面的作者是空的
 	        if(resultJsonClass.entities == null || resultJsonClass.entities.size() == 0 || resultJsonClass.entities.get(0).AA == null
 	        		|| resultJsonClass.entities.get(0).AA.size() == 0)
