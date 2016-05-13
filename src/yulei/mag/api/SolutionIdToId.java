@@ -222,10 +222,11 @@ public class SolutionIdToId {
 	
 	/**
 	 * 找到链表1的RId的Rid是id2，及id1的参考文献的参考文献中有id2
+	 * 思路：RId=id2的论文，找这些论文里有没有id1的RId 这样只用搜一次
 	 * @param id1 id1的编号
 	 * @param id2 id2的编号
 	 * @param list1 id1的所有Rid
-	 * @return [1,2],[3,4],或""
+	 * @return [id1,RId,id2],或""
 	 */
 	private String IdToId_2Hop_RId(String id1,String id2,List<String> list1){
 		System.out.println("2-Hop-RId start");

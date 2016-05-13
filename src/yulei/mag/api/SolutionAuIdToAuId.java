@@ -1,13 +1,11 @@
 package yulei.mag.api;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
-import yulei.mag.api.ResultJsonClass.Field;
 
 public class SolutionAuIdToAuId {
 	public static APIuse apiuse;
@@ -137,7 +135,6 @@ public class SolutionAuIdToAuId {
 	public String AuIdToAuId_2Hop_Rule2(String AuId1,String AuId2,List<Entities> list1,List<Entities> list2)
 	{
 		long st = System.nanoTime();
-		System.out.println("3-Hop start :");
 		String result = "";
 		
 		List<Entities>maxList = list1;

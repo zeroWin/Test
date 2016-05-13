@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -12,6 +11,7 @@ import com.sun.net.httpserver.HttpServer;
 import yulei.mag.api.APIuse;
 import yulei.mag.api.APIuse.IDtype;
 import yulei.mag.api.SolutionAuIdToAuId;
+import yulei.mag.api.SolutionAuIdToId;
 import yulei.mag.api.SolutionIdToId;
 
 /*
@@ -21,11 +21,14 @@ public class Server {
 
 	private static SolutionIdToId solutionIdToId;
 	private static SolutionAuIdToAuId solutionAuIdToAuId;
+	private static SolutionAuIdToId solutionAuIdToId; 
 	private static APIuse apiuse;
 	
 	public static void main(String[] args) throws Exception {
 		solutionIdToId = new SolutionIdToId();
 		solutionAuIdToAuId = new SolutionAuIdToAuId();
+		solutionAuIdToId = new SolutionAuIdToId();
+		
 		apiuse = new APIuse();
 		HttpServer server = HttpServer.create(new InetSocketAddress(80), 0);
 		server.createContext("/Bupt", new MyHandler());
@@ -84,7 +87,15 @@ public class Server {
 			}
 			else // 一个是ID，一个是AA.AuId
 			{
-				response = "[["+id1+","+id2+"]]";
+				if(id1Type == IDtype.ID) // 调用Id->AuId函数
+				{
+					response = "[["+id1+","+id2+"]]";
+				}
+				else // 调用AuId->Id函数
+				{
+					response = "[["+id1+","+id2+"]]";
+				}
+				
 			}
 			String temp1 = response.replace("[", "");
 			System.out.println("路径个数："+ (response.length() - temp1.length() - 1));
