@@ -110,17 +110,19 @@ public class APIuse {
 		try
 		{
 			// 发送http请求
+//			long st1 = System.nanoTime();
 			HttpGet request = new HttpGet(uri);
 
 			this.response = this.httpclient.execute(request);
 	        HttpEntity entity = this.response.getEntity();
-	        
+//	        System.out.println("搜索 total times :"+(System.nanoTime()-st1));
 	        if (entity != null) 
 	        {
 	        	 String result = EntityUtils.toString(entity);
 //	        	 System.out.println(result);
 	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
 	        }
+//	        System.out.println("搜索+字符串转换 total times :"+(System.nanoTime()-st1));
 		}
 		catch (Exception e)
 		{
@@ -221,10 +223,11 @@ public class APIuse {
 		try
 		{
 
-			String uri = "https://oxfordhk.azure-api.net/academic/v1.0/evaluate?count=10000&attributes=AA.AuId,AA.AfId&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6";
-			uri = uri + "&expr=Id="+Id;
+			//String uri = "https://oxfordhk.azure-api.net/academic/v1.0/evaluate?count=10000&attributes=AA.AuId,AA.AfId&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6";
+			//uri = uri + "&expr=Id="+Id;
+			this.builderForType.setParameter("expr","Id="+Id);
 //			long st = System.nanoTime();
-			ResultJsonClass resultJsonClass = HandleURI(new URI(uri));
+			ResultJsonClass resultJsonClass = HandleURI(this.builderForType.build());
 //			System.out.println("Search times "+(System.nanoTime()-st));
 	        // 搜索ID得不到结果或者搜索到的ID里面的作者是空的
 	        if(resultJsonClass.entities == null || resultJsonClass.entities.size() == 0 || resultJsonClass.entities.get(0).AA == null

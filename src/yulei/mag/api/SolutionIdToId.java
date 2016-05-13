@@ -44,7 +44,10 @@ public class SolutionIdToId {
 		apiuse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
 		apiuse.setOffset("0");
 		// 1-hop
+		System.out.println("1-Hop start");
+		long st = System.nanoTime();
 		String path1Hop = IdToId_1Hop(id1, id2);
+		System.out.println("1-Hop end and total times :"+(System.nanoTime()-st));		
 		if(path1Hop.length() != 0)
 			result += "["+path1Hop+"]" + ",";
 		
@@ -201,7 +204,7 @@ public class SolutionIdToId {
 			maxList = list2;
 			minList = list1;
 		}
-		Map<String,Integer> map = new HashMap<String,Integer>(maxList.size());  
+		Map<String,Integer> map = new HashMap<String,Integer>((int)(maxList.size()/0.75));  
 		for(Field field : maxList)
 		{
 			map.put(field.FId, 1);
@@ -302,7 +305,7 @@ public class SolutionIdToId {
 			maxList = list2;
 			minList = list1;
 		}
-		Map<String,Integer> map = new HashMap<String,Integer>(maxList.size());  
+		Map<String,Integer> map = new HashMap<String,Integer>((int)(maxList.size()/0.75));  
 		for(Author author : maxList)
 		{
 			map.put(author.AuId, 1);
@@ -322,10 +325,10 @@ public class SolutionIdToId {
 	/**
 	 * 用来判断所有规则 找到所有id1到id2的3跳路径
 	 * 1.id1->id1.RId 找所有id1.RId到id2的2跳路径 1
-	 * 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2 6，7
-	 * 3.id1->id1.CId->step1：找出该会议的所有论文->step2：判断这些论文是否引用id2 4，5
-	 * 4.id1->id1.FId->step1：找出领域的所有论文 ->step2:判断这些论文是否引用id2 2，3
-	 * 5.id1->id1.AA.AuId->step1：找出作者写的所有论文->step：判断这些论文是否引用id2 10，11
+	 * 2.id1->id1.JId->找RId为id2且属于JId的所有论文  6，7
+	 * 3.id1->id1.CId->找RId为id2且属于CId的所有论文 4，5
+	 * 4.id1->id1.FId->找RId为id2且属于FId的所有论文 2，3
+	 * 5.id1->id1.AuId->找RId为id2且作者为AuId的所有论文 10，11
 	 * @param id1
 	 * @param id2
 	 * @return
@@ -341,24 +344,24 @@ public class SolutionIdToId {
 			result += IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2);
 		}
 		
-		// 2.id1->id1.JId->step1：找出该期刊所有论文->step2：判断这些论文是否引用id2
+		// 2.id1->id1.JId->找RId为id2且属于JId的所有论文
 		if(EntitiesId1.J != null)
 		{
 			result += IdToId_3Hop_Rule2(id1,id2,EntitiesId1.J.JId);
 		}
 		
-		// 3.id1->id1.CId->step1：找出该会议的所有论文->step2：判断这些论文是否引用id2
+		// 3.id1->id1.CId->找RId为id2且属于CId的所有论文
 		if(EntitiesId1.C != null)
 		{
 			result += IdToId_3Hop_Rule3(id1,id2,EntitiesId1.C.CId);
 		}
 		
-		// 4.id1->id1.FId->step1：找出领域的所有论文 ->step2:判断这些论文是否引用id2
+		// 4.id1->id1.FId->找RId为id2且属于FId的所有论文
 		if(EntitiesId1.F != null && EntitiesId1.F.size() != 0){
 			result += IdToId_3Hop_Rule4(id1,id2,EntitiesId1.F);
 		}
 		
-		// 5.id1->id1.AA.AuId->step1：找出作者写的所有论文->step：判断这些论文是否引用id2
+		// 5.id1->id1.AuId->找RId为id2且作者为AuId的所有论文
 		if(EntitiesId1.AA != null && EntitiesId1.AA.size() != 0)
 		{
 			result += IdToId_3Hop_Rule5(id1,id2,EntitiesId1.AA);

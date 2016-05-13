@@ -38,6 +38,7 @@ public class Server {
 		public void handle(HttpExchange httpExchange) throws IOException {
 			long st = System.nanoTime();
 			// 解析url并获取id1和id2
+			long st1 = System.nanoTime();
 			String response = "";
 			String strUrlParam = new String(httpExchange.getRequestURI().getQuery());
 			System.out.println("输入为："+strUrlParam);
@@ -56,28 +57,29 @@ public class Server {
 				id1 = arrSplitId2[1];
 				id2 = arrSplitId1[1];				
 			}
-			
-			// 获取并显示id1和id2的类型			
+			System.out.println("字符串处理所用时间： "+(System.nanoTime()-st1));
+			// 获取并显示id1和id2的类型
+			st1 = System.nanoTime();
 			IDtype id1Type,id2Type;
 			id1Type = apiuse.GetIdType(id1);
 			id2Type = apiuse.GetIdType(id2);
-			
+			System.out.println("类型判断使用时间： "+(System.nanoTime()-st1));
 			// 处理算法
 
 			if(id1Type == id2Type)
 			{
 				if(id1Type == IDtype.ID) // 两个都是ID
 				{
-//					response = "[["+id1+","+id2+"]]";
+					response = "[["+id1+","+id2+"]]";
 					
-					response = solutionIdToId.IdToId_All(id1, id2);
-					response = "["+response+"]";
+//					response = solutionIdToId.IdToId_All(id1, id2);
+//					response = "["+response+"]";
 				}
 				else // 两个都是AA.AuId
 				{
-					response = "[["+id1+","+id2+"]]";
-//					response = solutionAuIdToAuId.AuIdToAuId_All(id1, id2);
-//					response = "["+response+"]";
+//					response = "[["+id1+","+id2+"]]";
+					response = solutionAuIdToAuId.AuIdToAuId_All(id1, id2);
+					response = "["+response+"]";
 				}
 			}
 			else // 一个是ID，一个是AA.AuId
