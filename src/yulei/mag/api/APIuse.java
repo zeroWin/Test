@@ -41,7 +41,7 @@ public class APIuse {
 		     this.builderForType.setParameter("count", "10000");
 		     this.builderForType.setParameter("attributes", "AA.AuId,AA.AfId");
 		     
-		     HandleURI(new URI("https://oxfordhk.azure-api.net/academic/v1.0/evaluate?expr=Id=2140251882&count=10000&attributes=Id,AA.AuId,AA.AfId,F.FId,J.JId,C.CId,RId&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6"));
+		     HandleURI(new URI("https://oxfordhk.azure-api.net/academic/v1.0/evaluate?expr=Id=2140251882&count=10000&attributes=Id&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6"));
 	     }
 	     catch (Exception e)
 	     {
@@ -116,13 +116,14 @@ public class APIuse {
 			this.response = this.httpclient.execute(request);
 	        HttpEntity entity = this.response.getEntity();
 //	        System.out.println("搜索 total times :"+(System.nanoTime()-st1));
+//	        st1 = System.nanoTime();
 	        if (entity != null) 
 	        {
 	        	 String result = EntityUtils.toString(entity);
 //	        	 System.out.println(result);
 	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
 	        }
-//	        System.out.println("搜索+字符串转换 total times :"+(System.nanoTime()-st1));
+//	        System.out.println("字符串转换 total times :"+(System.nanoTime()-st1));
 		}
 		catch (Exception e)
 		{

@@ -14,7 +14,7 @@ public class SolutionAuIdToAuId {
 		apiuse = new APIuse();
 	};
 	
-	
+	// 总共只需要请求两次即可完成所有操作
 	public String AuIdToAuId_All(String AuId1,String AuId2)
 	{
 		String result = "";
@@ -35,6 +35,7 @@ public class SolutionAuIdToAuId {
         // 得到AuId2需要的数据
 		expr = "Composite(AA.AuId="+AuId2+")";
 		apiuse.setExpr(expr);
+		apiuse.setAttributes("Id,AA.AuId,AA.AfId"); // 不需要作者2引用的文章
         searchResultId = apiuse.HandleURI(apiuse.getURI());
         List<Entities> EntitiesAuId2 = searchResultId.entities;    
         
@@ -217,35 +218,32 @@ public class SolutionAuIdToAuId {
 		String result = "";
 		
 		// 先计算作者1所有论文共引用了多少篇论文方便给hashmap开辟空间
+		// 这个地方还是不能用MAP,因为Key是RID,Value是ID
+		// 再多个ID都引用了一篇参考文献的时候，RID就会重复，因此就会产生错误。
+		// 下面的统计和显示没用，就是玩一下
 		long AuIdPaperRidNum = 0;
-		for(Entities entities : EntitiesAuId1)
-			AuIdPaperRidNum += entities.RId.size();
 		
-		System.out.println("AuId1="+AuId1+"所写论文引用其他论文个数为："+AuIdPaperRidNum);
-		if(AuIdPaperRidNum == 0)
-			return result = "";
+		// 设定key为作者2写的论文Id，value为int
+		Map<String,Integer> map = new HashMap<String,Integer>((int)(EntitiesAuId2.size()/0.75));
+		for(Entities entities : EntitiesAuId2) // 遍历AuId1的每一个实体
+			map.put(entities.Id, 1);
 		
-		// 设定key为RId，value为Id
-		Map<String,String> map = new HashMap<String,String>((int)(AuIdPaperRidNum/0.75));
-		for(Entities entities : EntitiesAuId1) // 遍历AuId1的每一个实体
+		for(Entities entities : EntitiesAuId1)	// 遍历AuId1的每一个实体
 		{
-			if(entities.RId.size() == 0) // 没有引用文献
+			if(entities.RId.size() == 0) // 这个论文没有参考文献 跳过
 				continue;
 			
-			for(String auid1Rid : entities.RId) // 遍历所有引用文献,并将值存成应用文献对应的id
-				map.put(auid1Rid, entities.Id);
-		}
-		
-		for(Entities entities : EntitiesAuId2)	// 遍历AuId2的每一个实体
-		{
-			String getId = map.get(entities.Id);
-			if(getId != null) // 找到了
+			AuIdPaperRidNum += entities.RId.size();
+			
+			for(String everyRId:entities.RId) // 轮询每一个RID
 			{
-				//			 AuId1     Id          RId			AuId2
-				result += "["+AuId1+","+getId+","+entities.Id+","+AuId2+"],";
+				if(map.get(everyRId) != null) // 找到了
+				{
+					result += "["+AuId1+","+entities.Id+","+everyRId+","+AuId2+"],";
+				}
 			}
 		}
-		
+		System.out.println("AuId1="+AuId1+"所写论文引用其他论文个数为："+AuIdPaperRidNum);
 		System.out.println("3-Hop end and total times ："+(System.nanoTime()-st));
 		
 		return result;
