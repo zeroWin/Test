@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonArray;
+
 import yulei.mag.api.APIuse;
 import yulei.mag.api.ResultJsonClass;
 import yulei.mag.api.ResultJsonClass.Author;
@@ -14,9 +16,10 @@ import yulei.mag.api.ReturnResult;
 public class Solution {
 	public static APIuse apiuse;
 	public static ReturnResult returnResult;
-	
+	public static JsonArray jsonstr;
 	public Solution(){
 		apiuse = new APIuse();
+		jsonstr = new JsonArray();
 	};
 //	public static void main(String[] args) {
 //		// TODO Auto-generated method stub
@@ -752,4 +755,9 @@ public class Solution {
     	}
 		return result;
 	}
+	
+	public  JsonArray getJsonArray(){
+		return Solution.jsonstr;
+	}
+	
 }

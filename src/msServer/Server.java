@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-
-
+import com.google.gson.JsonArray;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -32,14 +31,30 @@ public class Server {
 
 	static class MyHandler implements HttpHandler {
 		public void handle(HttpExchange httpExchange) throws IOException {
+			long st = System.nanoTime();
 			// 解析url并获取id1和id2
 			String response = "";
 			String strUrlParam = new String(httpExchange.getRequestURI().getQuery());
 			System.out.println("输入为："+strUrlParam);
 			String[] arrSplit = strUrlParam.split("&");
-			String id1 = arrSplit[0].split("=")[1];
-			String id2 = arrSplit[1].split("=")[1];
+			String[] arrSplitId1 = arrSplit[0].split("=");
+			String[] arrSplitId2 = arrSplit[1].split("=");
+			String id1 = "";
+			String id2 = "";
+			if(arrSplitId1[0].equals("id1"))
+			{
+				id1 = arrSplitId1[1];
+				id2 = arrSplitId2[1];
+			}
+			else
+			{
+				id1 = arrSplitId2[1];
+				id2 = arrSplitId1[1];				
+			}
 			
+//			for(String s : httpExchange.getRequestHeaders().keySet()){
+//				System.out.print(httpExchange.getRequestHeaders().get(s));
+//			}
 			// 获取并显示id1和id2的类型			
 			APIuse apiuse = new APIuse();
 			IDtype id1Type,id2Type;
@@ -47,7 +62,7 @@ public class Server {
 			id2Type = apiuse.GetIdType(id2);
 			
 			// 处理算法
-			long st = System.nanoTime();
+
 			if(id1Type == id2Type)
 			{
 				if(id1Type == IDtype.ID) // 两个都是ID
