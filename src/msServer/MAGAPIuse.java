@@ -1,7 +1,5 @@
 package msServer;
 
-import java.net.URI;
-
 import org.apache.http.client.utils.URIBuilder;
 
 //// This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
@@ -75,13 +73,14 @@ public class MAGAPIuse
          //apiUse.setExpr("Id=2332023333");
          //apiUse.setExpr("And(Composite(AA.AuId=57898110),Composite(AA.AuId=2014261844))");
          //apiUse.setExpr("Composite(AA.AuId=2251253715)");
-         apiUse.setExpr("Or(Or(Or(Id=2052243599,Id=2012748804),Id=1605609421),Id=2251676003)");
+         apiUse.setExpr("Or(Composite(AA.AuId=2251253715),Id=2251253715)");
          //apiUse.setExpr("Id=2180737804");
          apiUse.setAttributes("AA.AfId");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-         apiUse.showResultAsJsonFormat(searchResult);             
+        // apiUse.showResultAsJsonFormat(searchResult);             
          // 直接通过searchResult获取结果的方法
+         System.out.println("Or(Composite(AA.AuId=".length()+"),Id=".length()+")".length());
          System.out.println(searchResult.entities.size());
          System.out.println(searchResult.expr);
          System.out.println(searchResult.entities.get(0).logprob);
@@ -90,6 +89,7 @@ public class MAGAPIuse
          System.out.println(searchResult.entities.get(0).AA.get(0).AfId);
          System.out.println(searchResult.entities.get(0).C.CId);
          System.out.println(searchResult.entities.get(0).J.JId);
+
  
          // 也可通过函数获取各个参数
          // 
