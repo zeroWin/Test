@@ -138,23 +138,17 @@ public class SolutionAuIdToAuId {
 		long st = System.nanoTime();
 		String result = "";
 		
-		List<Entities>maxList = list1;
-		List<Entities>minList = list2;
-		if(list2.size() > list1.size())
-		{
-			maxList = list2;
-			minList = list1;
-		}
-		Map<String,Integer> map = new HashMap<String,Integer>((int)(maxList.size()/0.75));
+		
+		Map<String,Integer> map = new HashMap<String,Integer>((int)(list1.size()/0.75));
 		System.out.println("AuId1="+AuId1+"所写论文个数为："+list1.size());
 		System.out.println("AuId2="+AuId2+"所写论文个数为："+list2.size());
-		for(Entities entities : maxList)	// 将作者1所有的可能在的领域领域放到图中
+		for(Entities entities : list1)	// 将作者1所有的可能在的领域领域放到图中
 		{
 			for(Author author : entities.AA ) //遍历作者
 			{
 				if(author.AuId.equals(AuId1)) //该作者是AuId1
 				{
-					if(author.AfId != null)	//有所属领域
+					if(author.AfId != null)	//有所属组织
 					{
 						System.out.println(author.AfId);
 						if(map.get(author.AfId) == null)// 如果map中没有加入到map中
@@ -173,7 +167,7 @@ public class SolutionAuIdToAuId {
 		System.out.println("AuId1="+AuId1+"会归属于"+map.size()+"个组织");
 		
 		// 找作者2在这些领域中吗
-		for(Entities entities : minList)
+		for(Entities entities : list2)
 		{
 			for(Author author : entities.AA) // 遍历作者
 			{

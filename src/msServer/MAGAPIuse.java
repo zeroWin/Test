@@ -73,13 +73,13 @@ public class MAGAPIuse
          //apiUse.setExpr("And(Composite(F.FId=41008148),RId=2147152072)");
          //apiUse.setExpr("Id=2310280492");
          //apiUse.setExpr("Id=2332023333");
-         apiUse.setExpr("And(Composite(AA.AuId=57898110),Composite(AA.AuId=2014261844))");
-         apiUse.setExpr("Composite(AA.AuId=57898110)");
-         //apiUse.setExpr("Id=1605609421");
-         apiUse.setAttributes("Id,AA.AuId,AA.AfId");
+         //apiUse.setExpr("And(Composite(AA.AuId=57898110),Composite(AA.AuId=2014261844))");
+         apiUse.setExpr("Composite(AA.AuId=2251253715)");
+         //apiUse.setExpr("Id=2180737804");
+         apiUse.setAttributes("Id,J.JId,F.FId,C.CId,AA.AuId,AA.AfId,RId");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
-//         apiUse.showResultAsJsonFormat(searchResult);             
+         apiUse.showResultAsJsonFormat(searchResult);             
          // 直接通过searchResult获取结果的方法
          System.out.println(searchResult.entities.size());
          System.out.println(searchResult.expr);

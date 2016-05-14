@@ -94,6 +94,8 @@ public class Server {
 				else // 调用AuId->Id函数
 				{
 					response = "[["+id1+","+id2+"]]";
+//					response = solutionAuIdToId.AuIdToId_All(id1, id2);
+//					response = "["+response+"]";
 				}
 				
 			}

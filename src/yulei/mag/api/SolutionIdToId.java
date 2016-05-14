@@ -4,14 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonArray;
-
-import yulei.mag.api.APIuse;
-import yulei.mag.api.ResultJsonClass;
 import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
 import yulei.mag.api.ResultJsonClass.Field;
-import yulei.mag.api.ReturnResult;
 
 public class SolutionIdToId {
 	public static APIuse apiuse;
