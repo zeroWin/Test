@@ -111,6 +111,10 @@ public class testMAIN {
 		StringBuilder stringTemp = new StringBuilder();
 		if(stringTemp.toString().equals(""))
 		System.out.println(123);
+		
+		st = System.nanoTime(); 
+			System.out.println("显示一下是多长时间呢");
+		System.out.println("方式3时间： "+(System.nanoTime()-st));
 	}
 	
 	public static String concat1(String s1, String s2, String s3, String s4, String s5, String s6) {

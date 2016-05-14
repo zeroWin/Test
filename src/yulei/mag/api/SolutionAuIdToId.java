@@ -15,9 +15,11 @@ public class SolutionAuIdToId {
 		apiuse = new APIuse();
 	};
 	
-	
+	// 总共三次请求完成所有操作
 	public String AuIdToId_All(String AuId1,String Id2)
 	{
+		long st = System.nanoTime();
+		System.out.println("Find start");
 		String result = null;
 		
 		// 差条件
@@ -33,7 +35,7 @@ public class SolutionAuIdToId {
         ResultJsonClass searchResultId = apiuse.HandleURI(apiuse.getURI());
         List<Entities> EntitiesAuId1 = searchResultId.entities;
         
-        // 得到AuId2需要的数据
+        // 得到Id2需要的数据
 		expr = "Id="+Id2;
 		apiuse.setExpr(expr);
         searchResultId = apiuse.HandleURI(apiuse.getURI());
@@ -52,7 +54,8 @@ public class SolutionAuIdToId {
 		result = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
 				.append(path1Hop).append(path2Hop).append(path3Hop).toString();
 //		result = new StringBuilder(path1Hop.length())
-//		.append(path1Hop).toString();		
+//		.append(path1Hop).toString();
+		System.out.println("Find end and total times ："+(System.nanoTime()-st));	
 		int t = result.length();
 		if(t != 0) // 去掉最后的逗号 
 			return result.substring(0, t-1);
@@ -222,11 +225,11 @@ public class SolutionAuIdToId {
 			return "";
 		}
 		
-		// 找id2的作者中有图中组织的
+		// 找id2的作者中有图中组织的，没找出id2的作者所有可能在的组织，但先放放，先搞其他的
 		for(Author author : entitiesId2.AA) // 遍历每一个作者
 		{
-			if(author.AuId.equals(AuId1)) // 排除到论文作者是AuId1的情况
-				continue;
+//			if(author.AuId.equals(AuId1)) // 排除到论文作者是AuId1的情况
+//				continue;
 			
 			if(map.get(author.AfId) != null) // 这个作者在图中找到了组织，存在路径
 				result.append("[")
@@ -237,8 +240,6 @@ public class SolutionAuIdToId {
 		}
 		
 		System.out.println("AuId1="+AuId1+"会归属于"+map.size()+"个组织");		
-		
-		
 		System.out.println("3-Hop rule1 end and total times ："+(System.nanoTime()-st));
 		return result.toString();
 		
@@ -247,7 +248,7 @@ public class SolutionAuIdToId {
 	
 	/**
 	 * 用来判断3-hop，AuId1 -> id2的3跳路径 规则3
-	 * 2.AuId->id 找id到id2的所有2跳路径，需要排除id=id2的情况
+	 * 2.AuId->id 找id到id2的所有2跳路径，需要排除id=id2的情况，其实不用
 	 * @param Auid1
 	 * @param id2
 	 * @return [AuId1,AfId,AuIdx,Id2],或者 ""
@@ -257,17 +258,25 @@ public class SolutionAuIdToId {
 		long st = System.nanoTime();
 		System.out.println("3-Hop rule2 start");
 		StringBuilder result = new StringBuilder();
+        List<Entities> EntitiesRid2 = null;
+		// 首先判断AuId1写的论文有没有引用文献
+		long AuId1RIdNum = 0;
+		for(Entities entitiesAuId1 : EntitiesAuId1)
+			AuId1RIdNum += entitiesAuId1.RId.size();
 		
-		// 搜索所有引用了id2的文献Id
-		apiuse.setAttributes("Id"); // 返回的东西，根据路径分析图，只需要Id
-		String expr = "RId="+id2;
-		apiuse.setExpr(expr);
-        ResultJsonClass searchResultId = apiuse.HandleURI(apiuse.getURI());
-        List<Entities> EntitiesRid2 = searchResultId.entities;
-        
+		if(AuId1RIdNum != 0) // 有参考文献才搜索
+		{
+			// 搜索所有引用了id2的文献Id
+			apiuse.setAttributes("Id"); // 返回的东西，根据路径分析图，只需要Id
+			String expr = "RId="+id2;
+			apiuse.setExpr(expr);
+	        ResultJsonClass searchResultId = apiuse.HandleURI(apiuse.getURI());
+	        EntitiesRid2 = searchResultId.entities;
+			System.out.println("引用了id2的论文个数为："+EntitiesRid2.size()); // 默认不大于50000
+		}
 		// 大小就是显示一波，没有什么用
-		System.out.println("AuId1="+AuId1+"所写论文个数为："+EntitiesAuId1.size());
-		System.out.println("引用了id2的论文个数为："+EntitiesRid2.size()); // 默认不大于50000
+		System.out.println("AuId1="+AuId1+"所写论文个数为："+EntitiesAuId1.size()+"共引用论文数："+AuId1RIdNum);
+
 		
 		for(Entities entitiesAuId1 : EntitiesAuId1) //遍历作者的每一篇论文
 		{
@@ -329,7 +338,7 @@ public class SolutionAuIdToId {
 			// 判断RID 参考文献 规则1 会将uri的AttributesAA.AuId;
 			System.out.println("ID1->RId->RId = ID2:");
 			// 有论文应用id2,且AuId1写的论文有引用文献
-			if(EntitiesRid2.size() != 0 && entitiesAuId1.RId != null && entitiesAuId1.RId.size() != 0)
+			if(entitiesAuId1.RId != null && entitiesAuId1.RId.size() != 0 && EntitiesRid2.size() != 0)
 			{
 				String temp = IdToId_2Hop_RId(AuId1,entitiesAuId1.Id,id2,entitiesAuId1.RId,EntitiesRid2);
 				result.append(temp);

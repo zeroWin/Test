@@ -13,6 +13,7 @@ import yulei.mag.api.APIuse.IDtype;
 import yulei.mag.api.SolutionAuIdToAuId;
 import yulei.mag.api.SolutionAuIdToId;
 import yulei.mag.api.SolutionIdToId;
+import yulei.mag.api.SolutionIdToAuId;
 
 /*
  * a simple static http server
@@ -21,13 +22,15 @@ public class Server {
 
 	private static SolutionIdToId solutionIdToId;
 	private static SolutionAuIdToAuId solutionAuIdToAuId;
-	private static SolutionAuIdToId solutionAuIdToId; 
+	private static SolutionAuIdToId solutionAuIdToId;
+	private static SolutionIdToAuId solutionIdToAuId;
 	private static APIuse apiuse;
 	
 	public static void main(String[] args) throws Exception {
 		solutionIdToId = new SolutionIdToId();
 		solutionAuIdToAuId = new SolutionAuIdToAuId();
 		solutionAuIdToId = new SolutionAuIdToId();
+		solutionIdToAuId = new SolutionIdToAuId();
 		
 		apiuse = new APIuse();
 		HttpServer server = HttpServer.create(new InetSocketAddress(80), 0);
@@ -42,14 +45,14 @@ public class Server {
 			long st = System.nanoTime();
 			// 解析url并获取id1和id2
 			long st1 = System.nanoTime();
-			String response = "";
+			String response = null;
 			String strUrlParam = new String(httpExchange.getRequestURI().getQuery());
 			System.out.println("输入为："+strUrlParam);
 			String[] arrSplit = strUrlParam.split("&");
 			String[] arrSplitId1 = arrSplit[0].split("=");
 			String[] arrSplitId2 = arrSplit[1].split("=");
-			String id1 = "";
-			String id2 = "";
+			String id1 = null;
+			String id2 = null;
 			if(arrSplitId1[0].equals("id1"))
 			{
 				id1 = arrSplitId1[1];
@@ -73,29 +76,35 @@ public class Server {
 			{
 				if(id1Type == IDtype.ID) // 两个都是ID
 				{
-					response = "[["+id1+","+id2+"]]";
+					response = "[]";
 					
-//					response = solutionIdToId.IdToId_All(id1, id2);
-//					response = "["+response+"]";
+//					String result = solutionIdToId.IdToId_All(id1, id2);
+//					response =  new StringBuilder(3+result.length()).append("[")
+//					.append(result).append("]").toString();
 				}
 				else // 两个都是AA.AuId
 				{
-//					response = "[["+id1+","+id2+"]]";
-					response = solutionAuIdToAuId.AuIdToAuId_All(id1, id2);
-					response = "["+response+"]";
+					response = "[]";
+//					String result = solutionAuIdToAuId.AuIdToAuId_All(id1, id2);
+//					response =  new StringBuilder(3+result.length()).append("[")
+//					.append(result).append("]").toString();
 				}
 			}
 			else // 一个是ID，一个是AA.AuId
 			{
 				if(id1Type == IDtype.ID) // 调用Id->AuId函数
 				{
-					response = "[["+id1+","+id2+"]]";
+//					response = "[]";
+					String result = solutionIdToAuId.IdToAuId_All(id1, id2);
+					response =  new StringBuilder(3+result.length()).append("[")
+							.append(result).append("]").toString();
 				}
 				else // 调用AuId->Id函数
 				{
-					response = "[["+id1+","+id2+"]]";
-//					response = solutionAuIdToId.AuIdToId_All(id1, id2);
-//					response = "["+response+"]";
+					response = "[]";
+//					String result = solutionAuIdToId.AuIdToId_All(id1, id2);
+//					response =  new StringBuilder(3+result.length()).append("[")
+//							.append(result).append("]").toString();;
 				}
 				
 			}

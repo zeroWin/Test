@@ -74,9 +74,10 @@ public class MAGAPIuse
          //apiUse.setExpr("Id=2310280492");
          //apiUse.setExpr("Id=2332023333");
          //apiUse.setExpr("And(Composite(AA.AuId=57898110),Composite(AA.AuId=2014261844))");
-         apiUse.setExpr("Composite(AA.AuId=2251253715)");
+         //apiUse.setExpr("Composite(AA.AuId=2251253715)");
+         apiUse.setExpr("Or(Or(Or(Id=2052243599,Id=2012748804),Id=1605609421),Id=2251676003)");
          //apiUse.setExpr("Id=2180737804");
-         apiUse.setAttributes("Id,J.JId,F.FId,C.CId,AA.AuId,AA.AfId,RId");
+         apiUse.setAttributes("AA.AfId");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          // 显示结果
          apiUse.showResultAsJsonFormat(searchResult);             
