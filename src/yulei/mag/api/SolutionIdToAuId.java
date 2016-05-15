@@ -57,7 +57,8 @@ public final class SolutionIdToAuId {
 		//System.out.println("1-Hop start");
 		String result = null;
 		
-		for(Author author : entitiesId1.AA)
+		List<Author> entitiesId1AATemp = entitiesId1.AA;
+		for(Author author : entitiesId1AATemp)
 		{
 			if(author.AuId.equals(AuId2)) // 找到了作者是AuId2
 			{
@@ -97,7 +98,8 @@ public final class SolutionIdToAuId {
 			if(Id1RIdNum > AuId2PaperNum) // id1参考文献数目大于AuId2写的论文数
 			{
 				Map<String,Integer> map = new HashMap<String,Integer>((int)(Id1RIdNum/0.75));
-				for(String everyRId : entitiesId1.RId)
+				List<String> entitiesId1RIdTemp = entitiesId1.RId;
+				for(String everyRId : entitiesId1RIdTemp)
 					map.put(everyRId, 1);
 				
 				for(Entities entities:EntitiesAuId2) // 遍历Id2的每一篇论文
@@ -114,13 +116,11 @@ public final class SolutionIdToAuId {
 			else // AuId2写的论文数大于id2的参考文献数目
 			{
 				Map<String,Integer> map = new HashMap<String,Integer>((int)(AuId2PaperNum/0.75));
-				for(String everyRId : entitiesId1.RId)
-					map.put(everyRId, 1);
-				
-				for(Entities entities:EntitiesAuId2) // 遍历Id2的每一篇论文
+				for(Entities entities:EntitiesAuId2) // 遍历AuId2的每一篇论文
 					map.put(entities.Id, 1);
 				
-				for(String everyRId : entitiesId1.RId) // 遍历每一篇参考文献
+				List<String> entitiesId1RIdTemp = entitiesId1.RId;
+				for(String everyRId : entitiesId1RIdTemp) // 遍历每一篇参考文献
 				{
 					if(map.get(everyRId) != null) // 找到了
 					{
@@ -218,18 +218,21 @@ public final class SolutionIdToAuId {
 		//System.out.println("id1="+Id1+"作者个数为："+Id1AuIdNum);
 		
 		Map<String,Integer> map = new HashMap<String,Integer>((int)(Id1AuIdNum/0.75));
-		for(Author author : entitiesId1.AA) // 存放所有作者
+		List<Author> entitiesAAId1temp = entitiesId1.AA;
+		for(Author author : entitiesAAId1temp) // 存放所有作者
 			map.put(author.AuId, 1);
 		
 		for(Entities entities : EntitiesAuId2) // 遍历作者2写的每一篇论文
 		{
-			for(Author author : entities.AA) // 遍历每一个作者
+			String TempId = entities.Id;
+			List<Author> entitiesAAtemp = entities.AA;
+			for(Author author : entitiesAAtemp) // 遍历每一个作者
 			{
 				if(map.get(author.AuId) != null) // 找到了
 					result.append("[")
 					.append(Id1).append(",")
 					.append(author.AuId).append(",")
-					.append(entities.Id).append(",")
+					.append(TempId).append(",")
 					.append(AuId2).append("],");				
 			}
 		}
@@ -260,7 +263,8 @@ public final class SolutionIdToAuId {
 		//System.out.println("Id1="+Id1+"作者个数为："+entitiesId1.AA.size());
 		for(Entities entities : EntitiesAuId2)	// 将作者1所有的可能在的领域领域放到图中
 		{
-			for(Author author : entities.AA ) //遍历作者
+			List<Author> entitiesAAtemp = entities.AA;
+			for(Author author : entitiesAAtemp ) //遍历作者
 			{
 				if(author.AuId.equals(AuId2)) //该作者是AuId2
 				{
@@ -282,7 +286,8 @@ public final class SolutionIdToAuId {
 		}
 		
 		// 找id2的作者中有图中组织的，没找出id2的作者所有可能在的组织，但先放放，先搞其他的
-		for(Author author : entitiesId1.AA) // 遍历每一个作者
+		List<Author> entitiesId1AATemp = entitiesId1.AA;
+		for(Author author : entitiesId1AATemp) // 遍历每一个作者
 		{
 //			if(author.AuId.equals(AuId2)) // 排除到论文作者是AuId2的情况
 //				continue;
@@ -383,18 +388,21 @@ public final class SolutionIdToAuId {
 		if(Id1FIdNum != 0) // id1有FId才做处理
 		{
 			Map<String,Integer> map = new HashMap<String,Integer>((int)(Id1FIdNum/0.75));
-			for(Field field  : entitiesId1.F) // 存放所有作者
+			List<Field> entitieId1FId = entitiesId1.F;
+			for(Field field  : entitieId1FId) // 存放所有作者
 				map.put(field.FId, 1);
 			
 			for(Entities entities : EntitiesAuId2) // 遍历作者2写的每一篇论文
 			{
-				for(Field field : entities.F) // 遍历每一个论文的FId
+				List<Field> entitieFId = entities.F;
+				String TempId = entities.Id;
+				for(Field field : entitieFId) // 遍历每一个论文的FId
 				{
 					if(map.get(field.FId)!= null ) // 找到了相同的FId
 						result.append("[")
 						.append(Id1).append(",")
 						.append(field.FId).append(",")
-						.append(entities.Id).append(",")
+						.append(TempId).append(",")
 						.append(AuId2).append("],");	
 				}
 			}
@@ -438,7 +446,8 @@ public final class SolutionIdToAuId {
 			List<Entities> searchEntities;
 			List<String> EntitiesRId;
 			apiuse.setAttributes("RId");
-			for(String Id1RId: entitiesId1.RId) // 遍历每一个RId
+			List<String> EntitiesId1RId = entitiesId1.RId;
+			for(String Id1RId: EntitiesId1RId) // 遍历每一个RId
 			{
 				if(flag == 0)
 				{

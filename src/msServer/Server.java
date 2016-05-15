@@ -157,8 +157,8 @@ public class Server {
 				}
 				
 			}
-//			String temp1 = response.replace("[", "");
-//			System.out.println("路径个数："+ (response.length() - temp1.length() - 1));
+			String temp1 = response.replace("[", "");
+			System.out.println("路径个数："+ (response.length() - temp1.length() - 1));
 			System.out.println("solution total times "+(System.nanoTime()-st));
 //			System.out.println(response);
 			// 返回给请求方

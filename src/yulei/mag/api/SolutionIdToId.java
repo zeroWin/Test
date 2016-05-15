@@ -715,7 +715,8 @@ public final class SolutionIdToId {
 				
 		for(Entities entities : PaperRefId2) // 遍历每一个引用id2的实体
 		{
-			for(Author author : entities.AA) // 遍历每一篇论文的的作者
+			List<Author> entitiesAATemp = entities.AA;
+			for(Author author : entitiesAATemp) // 遍历每一篇论文的的作者
 			{
 				if(map.get(author.AuId) != null) // 找到了
 					result.append("[").append(id1).append(",").append(author.AuId).append(",").append(entities.Id).append(",").append(id2).append("],");
