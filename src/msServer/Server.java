@@ -228,6 +228,7 @@ public class Server {
 					apiuse.setExpr(exprId2);
 					apiuse.setAttributes("Id,C.CId,F.FId,J.JId,AA.AuId,AA.AfId"); // 返回的东西，根据路径分析图，不需要id2的RId
 					searchResultId  = apiuse.HandleURI(apiuse.getURI());
+					apiuse.setAttributes("Id,C.CId,F.FId,J.JId,AA.AuId,AA.AfId,RId"); //恢复返回的东西
 					EntitiesId2 = searchResultId.entities;
 			        if(EntitiesId2.size() > 1) // 实体个数大于1肯定是AuId
 			        	id2Type = IDtype.AA_AuId;
