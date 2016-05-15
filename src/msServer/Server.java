@@ -68,7 +68,7 @@ public class Server {
 			}
 //			System.out.println("字符串处理所用时间： "+(System.nanoTime()-st1));
 			// 获取并显示id1和id2的类型
-//			st1 = System.nanoTime();
+			long st1 = System.nanoTime();
 			IDtype id1Type,id2Type;
 			
 			apiuse.setCount("50000"); // 个数
@@ -118,7 +118,7 @@ public class Server {
 //	        else
 //	        	System.out.println("id2="+id2+"类型为AuId");
 	        
-//			System.out.println("类型判断使用时间： "+(System.nanoTime()-st1));
+			System.out.println("类型判断使用时间： "+(System.nanoTime()-st1));
 			// 处理算法
 
 			if(id1Type == id2Type)

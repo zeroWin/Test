@@ -127,7 +127,8 @@ public final class SolutionAuIdToAuId {
 		//System.out.println("AuId2="+AuId2+"所写论文个数为："+list2.size());
 		for(Entities entities : list1)	// 将作者1所有的可能在的领域领域放到图中
 		{
-			for(Author author : entities.AA ) //遍历作者
+			List<Author> entitiesAATemp = entities.AA;
+			for(Author author : entitiesAATemp ) //遍历作者
 			{
 				if(author.AuId.equals(AuId1)) //该作者是AuId1
 				{
@@ -152,7 +153,8 @@ public final class SolutionAuIdToAuId {
 		// 找作者2在这些领域中吗
 		for(Entities entities : list2)
 		{
-			for(Author author : entities.AA) // 遍历作者
+			List<Author> entitiesAATemp = entities.AA;
+			for(Author author : entitiesAATemp) // 遍历作者
 			{
 				if(author.AuId.equals(AuId2)) //该作者是AuId2
 				{
@@ -213,8 +215,8 @@ public final class SolutionAuIdToAuId {
 				continue;
 			
 			//AuIdPaperRidNum += entities.RId.size();
-			
-			for(String everyRId:entities.RId) // 轮询每一个RID
+			List<String>entitiesRId = entities.RId;
+			for(String everyRId:entitiesRId) // 轮询每一个RID
 			{
 				if(map.get(everyRId) != null) // 找到了
 				{
