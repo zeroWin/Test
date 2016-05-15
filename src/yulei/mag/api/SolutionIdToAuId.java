@@ -8,7 +8,7 @@ import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
 import yulei.mag.api.ResultJsonClass.Field;
 
-public class SolutionIdToAuId {
+public final class SolutionIdToAuId {
 	public static APIuse apiuse;
 	public static ReturnResult returnResult;
 	public SolutionIdToAuId(){
@@ -20,7 +20,7 @@ public class SolutionIdToAuId {
 	{
 		//long st = System.nanoTime();
 		//System.out.println("Find start");
-		String result = null;
+//		String result = null;
 		
 		// 1-hop 1-hop的路径"" 或 [],
 		String path1Hop = IdToAuId_1Hop(Id1,AuId2,EntitiesId1);
@@ -31,7 +31,7 @@ public class SolutionIdToAuId {
 		// 3-hop 返回""着这[],
 		String path3Hop = IdToAuId_3Hop(Id1,AuId2,EntitiesId1,EntitiesAuId2);
 
-		result = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
+		String result = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
 				.append(path1Hop).append(path2Hop).append(path3Hop).toString();
 //		result = new StringBuilder(path1Hop.length())
 //		.append(path1Hop).toString();
@@ -41,6 +41,7 @@ public class SolutionIdToAuId {
 		if(t != 0) // 去掉最后的逗号 
 			return result.substring(0, t-1);
 		return result;
+		
 	}
 	
 	/**
@@ -56,7 +57,6 @@ public class SolutionIdToAuId {
 		//System.out.println("1-Hop start");
 		String result = null;
 		
-
 		for(Author author : entitiesId1.AA)
 		{
 			if(author.AuId.equals(AuId2)) // 找到了作者是AuId2

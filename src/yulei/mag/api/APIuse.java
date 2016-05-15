@@ -19,7 +19,7 @@ import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
 import yulei.mag.api.ResultJsonClass.Field;
 
-public class APIuse {
+public final class APIuse {
 	public enum IDtype{
 		ID,AA_AuId;
 	}
@@ -31,15 +31,15 @@ public class APIuse {
 	public APIuse(){
 	     try
 	     {
-	         this.builder = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
-	         this.builder.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
-	         this.httpclient = HttpClients.createDefault();
+	         builder = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
+	         builder.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
+	         httpclient = HttpClients.createDefault();
 	         
 	         
-	         this.builderForType = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
-	         this.builderForType.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
-		     this.builderForType.setParameter("count", "10000");
-		     this.builderForType.setParameter("attributes", "AA.AuId,AA.AfId");
+	         builderForType = new URIBuilder("https://oxfordhk.azure-api.net/academic/v1.0/evaluate");
+	         builderForType.setParameter("subscription-key", "f7cc29509a8443c5b3a5e56b0e38b5a6");
+		     builderForType.setParameter("count", "10000");
+		     builderForType.setParameter("attributes", "AA.AuId,AA.AfId");
 		     
 		     HandleURI(new URI("https://oxfordhk.azure-api.net/academic/v1.0/evaluate?expr=Id=2140251882&count=10000&attributes=Id&subscription-key=f7cc29509a8443c5b3a5e56b0e38b5a6"));
 	     }
@@ -56,7 +56,7 @@ public class APIuse {
 	 * @param expr
 	 */
 	public void setExpr(String expr){
-		this.builder.setParameter("expr", expr);
+		builder.setParameter("expr", expr);
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class APIuse {
 	 * @param expr
 	 */
 	public void setCount(String count){
-		this.builder.setParameter("count", count);
+		builder.setParameter("count", count);
 	}	
 	
 	/**
@@ -76,7 +76,7 @@ public class APIuse {
 	 * @param uri
 	 */
 	public void setAttributes(String attributes){
-		this.builder.setParameter("attributes", attributes);
+		builder.setParameter("attributes", attributes);
 	}		
 
 	/**
@@ -86,7 +86,7 @@ public class APIuse {
 	 * @param uri
 	 */
 	public void setOffset(String offset){
-		this.builder.setParameter("offset", offset);
+		builder.setParameter("offset", offset);
 	}	
 	/**
 	 * 获取前面配置好生成的uri地址
@@ -95,7 +95,7 @@ public class APIuse {
 	public URI getURI(){
 		URI uri = null;
 		try {
-			uri = this.builder.build();
+			uri = builder.build();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -111,18 +111,21 @@ public class APIuse {
 		{
 			// 发送http请求
 //			long st1 = System.nanoTime();
-			HttpGet request = new HttpGet(uri);
-
-			this.response = this.httpclient.execute(request);
-	        HttpEntity entity = this.response.getEntity();
-//	        System.out.println("搜索 total times :"+(System.nanoTime()-st1));
-//	        st1 = System.nanoTime();
-	        if (entity != null) 
-	        {
-	        	 String result = EntityUtils.toString(entity);
-//	        	 System.out.println(result);
-	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
-	        }
+//			HttpGet request = new HttpGet(uri);
+//
+//			this.response = this.httpclient.execute(request);
+			response = httpclient.execute(new HttpGet(uri));
+//	        HttpEntity entity = this.response.getEntity();
+//	        
+////	        System.out.println("搜索 total times :"+(System.nanoTime()-st1));
+////	        st1 = System.nanoTime();
+//	        if (entity != null) 
+//	        {
+//	        	 String result = EntityUtils.toString(entity);
+////	        	 System.out.println(result);
+//	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
+//	        }
+			searchResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ResultJsonClass.class);
 //	        System.out.println("字符串转换 total times :"+(System.nanoTime()-st1));
 		}
 		catch (Exception e)

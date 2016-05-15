@@ -7,7 +7,7 @@ import java.util.Map;
 import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
 
-public class SolutionAuIdToAuId {
+public final class SolutionAuIdToAuId {
 	public static APIuse apiuse;
 	public static ReturnResult returnResult;
 	public SolutionAuIdToAuId(){

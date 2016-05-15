@@ -8,7 +8,7 @@ import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
 import yulei.mag.api.ResultJsonClass.Field;
 
-public class SolutionAuIdToId {
+public final class SolutionAuIdToId {
 	public static APIuse apiuse;
 	public static ReturnResult returnResult;
 	public SolutionAuIdToId(){
@@ -20,7 +20,7 @@ public class SolutionAuIdToId {
 	{
 		//long st = System.nanoTime();
 		//System.out.println("Find start");
-		String result = null;
+//		String result = null;
 		 
         
 		// 1-hop 1-hop的路径"" 或 [],
@@ -33,7 +33,7 @@ public class SolutionAuIdToId {
 		String path3Hop = AuIdToId_3Hop(AuId1,Id2,EntitiesAuId1,EntitiesId2);
 
 		
-		result = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
+		String result = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
 				.append(path1Hop).append(path2Hop).append(path3Hop).toString();
 //		result = new StringBuilder(path1Hop.length())
 //		.append(path1Hop).toString();

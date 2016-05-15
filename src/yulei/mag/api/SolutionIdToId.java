@@ -8,7 +8,7 @@ import yulei.mag.api.ResultJsonClass.Author;
 import yulei.mag.api.ResultJsonClass.Entities;
 import yulei.mag.api.ResultJsonClass.Field;
 
-public class SolutionIdToId {
+public final class SolutionIdToId {
 	public static APIuse apiuse;
 	public static ReturnResult returnResult;
 	public SolutionIdToId(){
@@ -23,33 +23,41 @@ public class SolutionIdToId {
 	// 大概要搜三次+id1RId/60
 	public String IdToId_All(String id1,String id2,Entities EntitiesId1,Entities EntitiesId2)
 	{
-		//long st = System.nanoTime();
-		//System.out.println("Find start");
-		String result = null;
+		long st = System.nanoTime();
+		System.out.println("Find start");
+//		String result = null;
 
-
+		long st1 = System.nanoTime();
 		String exprId1 = new StringBuilder(4+id1.length())
 				.append("RId=").append(id2).toString();
 		apiuse.setExpr(exprId1);
 		
 		ResultJsonClass searchResultRId2 = apiuse.HandleURI(apiuse.getURI());
+		System.out.println("id2的RId搜索用时"+(System.nanoTime()-st1));
 		
 		// 1-hop
+		st1 = System.nanoTime();
 		String path1Hop = IdToId_1Hop(id1, id2,EntitiesId1);
+		System.out.println("1-hop time"+(System.nanoTime()-st1));
 		
 		// 2-hop
+		st1 = System.nanoTime();
 		String path2Hop = IdToId_2Hop(id1, id2,EntitiesId1,EntitiesId2,searchResultRId2.entities);
-
-		// 3-hop
-		String path3Hop = IdToId_3Hop(id1,id2,EntitiesId1,EntitiesId2,searchResultRId2.entities);
-	
-		result = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
-				.append(path1Hop).append(path2Hop).append(path3Hop).toString();
+		System.out.println("2-hop time"+(System.nanoTime()-st1));
 		
-		//System.out.println("Find end and total times ："+(System.nanoTime()-st));			
+		// 3-hop
+		st1 = System.nanoTime();
+		String path3Hop = IdToId_3Hop(id1,id2,EntitiesId1,EntitiesId2,searchResultRId2.entities);
+		System.out.println("3-hop time"+(System.nanoTime()-st1));
+		
+		String result  = new StringBuilder(path1Hop.length()+path2Hop.length()+path3Hop.length())
+				.append(path1Hop).append(path2Hop).append(path3Hop).toString();
+		System.out.println("Find end and total times ："+(System.nanoTime()-st));
 		int t = result.length();
 		if(t != 0) // 去掉最后的逗号
+		{
 			return result.substring(0, result.length()-1);
+		}
 		return result;
 	}
 	
@@ -60,12 +68,13 @@ public class SolutionIdToId {
 	 * @return [1,2], 或者 ""
 	 */
 	public String IdToId_1Hop(String id1,String id2,Entities EntitiesId1){
-		//System.out.println("1-Hop start");
-		//long st = System.nanoTime();
+//		System.out.println("1-Hop start");
+//		long st = System.nanoTime();
 		
 		StringBuilder result = new StringBuilder();
 		
-		for(String Id1RId : EntitiesId1.RId)
+		List<String> RidList = EntitiesId1.RId;
+		for(String Id1RId : RidList)
 		{
 			if(Id1RId.equals(id2)) // 找到了
 			{
@@ -73,7 +82,7 @@ public class SolutionIdToId {
 				break;
 			}
 		}
-		//System.out.println("1-Hop end and total times :"+(System.nanoTime()-st));  
+//		System.out.println("1-Hop end and total times :"+(System.nanoTime()-st));  
 		
         // 路径存在
         return result.toString();
@@ -91,8 +100,8 @@ public class SolutionIdToId {
 	 * @return [1,2],[3,4],[5,6] 或者""
 	 */
 	public String IdToId_2Hop(String id1,String id2,Entities EntitiesId1,Entities EntitiesId2,List<Entities> PaperRefId2){
-		//System.out.println("2-Hop start");
-		//long st = System.nanoTime();
+//		System.out.println("2-Hop start");
+//		long st = System.nanoTime();
 		
 		StringBuilder result = new StringBuilder();
 		int id1Length = id1.length();
@@ -101,10 +110,13 @@ public class SolutionIdToId {
 		//System.out.println("ID1->JId->ID2:");
 		if(EntitiesId1.J != null && EntitiesId2.J != null && EntitiesId1.J.JId.equals(EntitiesId2.J.JId))
 		{
-			StringBuilder temp = new StringBuilder(5+EntitiesId1.J.JId.length()+id1Length+id2Length)
+//			StringBuilder temp = new StringBuilder(5+EntitiesId1.J.JId.length()+id1Length+id2Length)
+//					.append("[").append(id1).append(",").append(EntitiesId1.J.JId).append(",")
+//					.append(id2).append("],");
+//			result.append(temp);
+			result.append(new StringBuilder(5+EntitiesId1.J.JId.length()+id1Length+id2Length)
 					.append("[").append(id1).append(",").append(EntitiesId1.J.JId).append(",")
-					.append(id2).append("],");
-			result.append(temp);
+					.append(id2).append("],"));
 			//System.out.println(temp);
 		}	
 		
@@ -112,45 +124,49 @@ public class SolutionIdToId {
 		//System.out.println("ID1->CId->ID2:");
 		if(EntitiesId1.C != null && EntitiesId2.C != null && EntitiesId1.C.CId.equals(EntitiesId2.C.CId))
 		{
-			StringBuilder temp = new StringBuilder(5+EntitiesId1.C.CId.length()+id1Length+id2Length)
+//			StringBuilder temp = new StringBuilder(5+EntitiesId1.C.CId.length()+id1Length+id2Length)
+//					.append("[").append(id1).append(",").append(EntitiesId1.C.CId).append(",")
+//					.append(id2).append("],");
+//			result.append(temp);
+			result.append(new StringBuilder(5+EntitiesId1.C.CId.length()+id1Length+id2Length)
 					.append("[").append(id1).append(",").append(EntitiesId1.C.CId).append(",")
-					.append(id2).append("],");
-			result.append(temp);
+					.append(id2).append("],"));
 			//System.out.println(temp);
 		}
 		
 		// 判断FId 领域 规则2，3
 		//System.out.println("ID1->FId->ID2:");
-		if(EntitiesId1.F != null  && EntitiesId2.F != null 
-		   && EntitiesId1.F.size() != 0 && EntitiesId2.F.size() != 0)
+		if(EntitiesId1.F.size() != 0 && EntitiesId2.F.size() != 0)
 		{
 			// 两个链表找出相同元素
-			String temp = IdToId_2Hop_FId(id1,id2,EntitiesId1.F,EntitiesId2.F);
-			result.append(temp);
+//			String temp = IdToId_2Hop_FId(id1,id2,EntitiesId1.F,EntitiesId2.F);
+//			result.append(temp);
+			result.append(IdToId_2Hop_FId(id1,id2,EntitiesId1.F,EntitiesId2.F));
 			//System.out.println(temp);
 		}
         
 	
 		// 判断 AA.AuId 作者 规则10，11
 		//System.out.println("ID1->AA.AuId->ID2:");
-		if(EntitiesId1.AA != null && EntitiesId2.AA != null 
-			&& EntitiesId1.AA.size() != 0 && EntitiesId2.AA.size() != 0)
+		if(EntitiesId1.AA.size() != 0 && EntitiesId2.AA.size() != 0)
 		{
-			String temp = IdToId_2Hop_AA_AuId(id1,id2,EntitiesId1.AA,EntitiesId2.AA);
-			result.append(temp);
+//			String temp = IdToId_2Hop_AA_AuId(id1,id2,EntitiesId1.AA,EntitiesId2.AA);
+//			result.append(temp);
+			result.append(IdToId_2Hop_AA_AuId(id1,id2,EntitiesId1.AA,EntitiesId2.AA));
 			//System.out.println(temp);
 		}
 		
 		// 判断RID 参考文献 规则1 会将uri的AttributesAA.AuId;
 		//System.out.println("ID1->RId->RId = ID2:");
-		if(EntitiesId1.RId != null && EntitiesId1.RId.size() != 0 && PaperRefId2.size() != 0)
+		if(EntitiesId1.RId.size() != 0 && PaperRefId2.size() != 0)
 		{ // Id1有参考文献且有文章引用Id2
-			String temp = IdToId_2Hop_RId(id1,id2,EntitiesId1.RId,PaperRefId2);
-			result.append(temp);
+//			String temp = IdToId_2Hop_RId(id1,id2,EntitiesId1.RId,PaperRefId2);
+//			result.append(temp);
+			result.append(IdToId_2Hop_RId(id1,id2,EntitiesId1.RId,PaperRefId2));
 			//System.out.println(temp);
 		}
 		
-		//System.out.println("2-Hop end and total times :"+(System.nanoTime()-st));
+//		System.out.println("2-Hop end and total times :"+(System.nanoTime()-st));
 		
 		// 返回结果
 		return result.toString();
@@ -292,8 +308,8 @@ public class SolutionIdToId {
 	 * @return
 	 */
 	public String IdToId_3Hop(String id1,String id2,Entities EntitiesId1,Entities EntitiesId2,List<Entities> PaperRefId2){
-		//System.out.println("3-Hop start");
-		//long st = System.nanoTime();
+//		System.out.println("3-Hop start");
+//		long st = System.nanoTime();
 		
 		StringBuilder result = new StringBuilder();
 		int PaperRefId2Num = PaperRefId2.size();
@@ -331,7 +347,7 @@ public class SolutionIdToId {
 				result.append(IdToId_3Hop_Rule5(id1,id2,EntitiesId1.AA,PaperRefId2));
 			}
 		}
-		//System.out.println("3-Hop end and total times ："+(System.nanoTime()-st));
+//		System.out.println("3-Hop end and total times ："+(System.nanoTime()-st));
 		// 返回结果
 		return result.toString();
 	}
@@ -380,7 +396,7 @@ public class SolutionIdToId {
 				{
 					//System.out.println("tttttt"+entities.Id);
 					// 返回结果是[RId,X,id2],
-					result.append(IdToId_2Hop(entities.Id, id2, entities, EntitiesId2, PaperRefId2));
+					result.append(IdToId_2HopForRule1(id1,entities.Id, id2, entities, EntitiesId2, PaperRefId2));
 				}
 				flag = 0;
 			}
@@ -399,13 +415,204 @@ public class SolutionIdToId {
 			{
 				//System.out.println("tttttt"+entities.Id);
 				// 返回结果是[RId,X,id2],
-				result.append(IdToId_2Hop(entities.Id, id2, entities, EntitiesId2, PaperRefId2));
+				result.append(IdToId_2HopForRule1(id1,entities.Id, id2, entities, EntitiesId2, PaperRefId2));
 			}			
 		}		
+//		System.out.println("3-Hop-Rule1 end and total times ："+(System.nanoTime()-st));	
+		return result.toString();
+	}
+	
+	public String IdToId_2HopForRule1(String trueId1,String id1,String id2,Entities EntitiesId1,Entities EntitiesId2,List<Entities> PaperRefId2){
+//		System.out.println("2-Hop start");
+//		long st = System.nanoTime();
 		
-		String resultTemp = result.toString().replace("[", "["+id1+",");
-		//System.out.println("3-Hop-Rule1 end and total times ："+(System.nanoTime()-st));	
-		return resultTemp;
+		StringBuilder result = new StringBuilder();
+		int id1Length = id1.length();
+		int id2Length = id2.length();
+		// 判断JID 期刊 规则6，7
+		//System.out.println("ID1->JId->ID2:");
+		if(EntitiesId1.J != null && EntitiesId2.J != null && EntitiesId1.J.JId.equals(EntitiesId2.J.JId))
+		{
+//			StringBuilder temp = new StringBuilder(5+EntitiesId1.J.JId.length()+id1Length+id2Length)
+//					.append("[").append(trueId1).append(",").append(id1).append(",").append(EntitiesId1.J.JId).append(",")
+//					.append(id2).append("],");
+//			result.append(temp);
+			result.append(new StringBuilder(5+EntitiesId1.J.JId.length()+id1Length+id2Length)
+					.append("[").append(trueId1).append(",").append(id1).append(",").append(EntitiesId1.J.JId).append(",")
+					.append(id2).append("],"));
+			//System.out.println(temp);
+		}	
+		
+		// 判断CID 会议 规则4，5
+		//System.out.println("ID1->CId->ID2:");
+		if(EntitiesId1.C != null && EntitiesId2.C != null && EntitiesId1.C.CId.equals(EntitiesId2.C.CId))
+		{
+//			StringBuilder temp = new StringBuilder(5+EntitiesId1.C.CId.length()+id1Length+id2Length)
+//					.append("[").append(trueId1).append(",").append(id1).append(",").append(EntitiesId1.C.CId).append(",")
+//					.append(id2).append("],");
+//			result.append(temp);
+			result.append(new StringBuilder(5+EntitiesId1.C.CId.length()+id1Length+id2Length)
+					.append("[").append(trueId1).append(",").append(id1).append(",").append(EntitiesId1.C.CId).append(",")
+					.append(id2).append("],"));
+			//System.out.println(temp);
+		}
+		
+		// 判断FId 领域 规则2，3
+		//System.out.println("ID1->FId->ID2:");
+		if(EntitiesId1.F.size() != 0 && EntitiesId2.F.size() != 0)
+		{
+			// 两个链表找出相同元素
+//			String temp = IdToId_2Hop_For3HopRule1_FId(trueId1,id1,id2,EntitiesId1.F,EntitiesId2.F);
+//			result.append(temp);
+			result.append(IdToId_2Hop_For3HopRule1_FId(trueId1,id1,id2,EntitiesId1.F,EntitiesId2.F));
+			//System.out.println(temp);
+		}
+        
+	
+		// 判断 AA.AuId 作者 规则10，11
+		//System.out.println("ID1->AA.AuId->ID2:");
+		if(EntitiesId1.AA.size() != 0 && EntitiesId2.AA.size() != 0)
+		{
+//			String temp = IdToId_2Hop_For3HopRule1_AA_AuId(trueId1,id1,id2,EntitiesId1.AA,EntitiesId2.AA);
+//			result.append(temp);
+			result.append(IdToId_2Hop_For3HopRule1_AA_AuId(trueId1,id1,id2,EntitiesId1.AA,EntitiesId2.AA));
+			//System.out.println(temp);
+		}
+		
+		// 判断RID 参考文献 规则1 会将uri的AttributesAA.AuId;
+		//System.out.println("ID1->RId->RId = ID2:");
+		if(EntitiesId1.RId.size() != 0 && PaperRefId2.size() != 0)
+		{ // Id1有参考文献且有文章引用Id2
+//			String temp = IdToId_2Hop_For3HopRule1_RId(trueId1,id1,id2,EntitiesId1.RId,PaperRefId2);
+//			result.append(temp);
+			result.append(IdToId_2Hop_For3HopRule1_RId(trueId1,id1,id2,EntitiesId1.RId,PaperRefId2));
+			//System.out.println(temp);
+		}
+		
+//		System.out.println("2-Hop end and total times :"+(System.nanoTime()-st));
+		
+		// 返回结果
+		return result.toString();
+		
+	}	
+
+	/**
+	 * 找到链表1和链表2相同的FID
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
+	private String IdToId_2Hop_For3HopRule1_FId(String trueId1,String id1,String id2,List<Field> list1,List<Field> list2){
+		//System.out.println("2-Hop-FId start");
+		//long st = System.nanoTime();
+		
+		StringBuilder result = new StringBuilder();
+		List<Field> maxList = list1;
+		List<Field> minList = list2;
+		if(list2.size() > list1.size())
+		{
+			maxList = list2;
+			minList = list1;
+		}
+		Map<String,Integer> map = new HashMap<String,Integer>((int)(maxList.size()/0.75));  
+		for(Field field : maxList)
+		{
+			map.put(field.FId, 1);
+		}
+		
+		for(Field field : minList){
+			if(map.get(field.FId) != null){ // 
+				result.append("[").append(trueId1).append(",").append(id1).append(",").append(field.FId).append(",").append(id2).append("],");
+			}
+		}
+		
+		//System.out.println("2-Hop-Fid end and total times :"+(System.nanoTime()-st));
+		return result.toString();
+	}
+	
+	/**
+	 * 找到链表1和链表2相同的AA.AuId
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
+	private String IdToId_2Hop_For3HopRule1_AA_AuId(String trueId1,String id1,String id2,List<Author> list1,List<Author> list2){
+		//long st = System.nanoTime();
+		//System.out.println("2-Hop-AA.AuId start");
+		
+		StringBuilder result = new StringBuilder();
+		List<Author> maxList = list1;
+		List<Author> minList = list2;
+		if(list2.size() > list1.size())
+		{
+			maxList = list2;
+			minList = list1;
+		}
+		Map<String,Integer> map = new HashMap<String,Integer>((int)(maxList.size()/0.75));  
+		for(Author author : maxList)
+		{
+			map.put(author.AuId, 1);
+		}
+		
+		for(Author author : minList){
+			if(map.get(author.AuId) != null){ // 找到了
+				result.append("[").append(trueId1).append(",").append(id1).append(",").append(author.AuId).append(",").append("],");
+			}
+		}
+		
+		//System.out.println("2-Hop-AA.AuId end and total times ："+(System.nanoTime()-st));
+		return result.toString();
+	}
+	
+	
+	/**
+	 * 找到链表1的RId的Rid是id2，及id1的参考文献的参考文献中有id2
+	 * 思路：RId=id2的论文，找这些论文里有没有id1的RId 这样只用搜一次
+	 * @param id1 id1的编号
+	 * @param id2 id2的编号
+	 * @param list1 id1的所有Rid
+	 * @return [id1,RId,id2],或""
+	 * 进到这个函数，说明有id1引用了文章且有文章引用id2
+	 */
+	private String IdToId_2Hop_For3HopRule1_RId(String trueId1,String id1,String id2,List<String> Id1RId,List<Entities> PaperRefId2){
+		//System.out.println("2-Hop-RId start");
+		//long st = System.nanoTime();
+		
+		StringBuilder result = new StringBuilder();
+		
+		int Id1RIdNum = Id1RId.size();
+		int PaperRefId2Num = PaperRefId2.size();
+		Map<String,Integer> map;
+		
+		if(Id1RId.size() > PaperRefId2.size()) // id1引用的文献比引用id2的文献多
+		{
+			map = new HashMap<String,Integer>((int)(Id1RIdNum/0.75)); 
+			for(String id1RId : Id1RId) // 把所有引用文献放入hash表中
+				map.put(id1RId, 1);
+			
+			for(Entities entities : PaperRefId2)
+			{
+				if(map.get(entities.Id) != null )// 找到了
+					result.append("[").append(trueId1).append(",").append(id1).append(",").append(entities.Id).append(",").append(id2).append("],");
+			}
+		}
+		else //id1引用的文献比引用id2的文献少
+		{
+			map = new HashMap<String,Integer>((int)(PaperRefId2Num/0.75)); 
+			for(Entities entities : PaperRefId2)
+				map.put(entities.Id, 1);
+			
+			for(String id1RId : Id1RId)
+			{
+				if(map.get(id1RId) != null) //找到了
+					result.append("[").append(trueId1).append(",").append(id1).append(",").append(id1RId).append(",").append(id2).append("],");
+			}
+			
+		}
+		//System.out.println("Id1="+id1+"引用其他论文个数为："+Id1RIdNum);
+		//System.out.println("其中引用id2的论文篇数为："+ PaperRefId2Num);
+		//System.out.println("2-Hop-RId end and total times ："+(System.nanoTime()-st));
+		return result.toString();
 	}
 	
 	/**
@@ -475,7 +682,8 @@ public class SolutionIdToId {
 			if(entities.F.size() == 0) // 这个论文没有所属领域
 				continue;
 			
-			for(Field everyfield : entities.F) // 遍历每一篇论文的FId
+			List<Field> entitiesF = entities.F;
+			for(Field everyfield : entitiesF) // 遍历每一篇论文的FId
 			{
 				if(map.get(everyfield.FId) != null) // 找到了
 					result.append("[").append(id1).append(",").append(everyfield.FId).append(",").append(entities.Id).append(",").append(id2).append("],");
@@ -516,95 +724,6 @@ public class SolutionIdToId {
 		
 		//System.out.println("3-Hop-Rule5 end and total times ："+(System.nanoTime()-st));	
 		return result.toString();
-	}
-	
-	
-	/**
-	 * 给字符串两边加Or
-	 * @param string1
-	 * @param string2
-	 * @return Or(string1,string2)
-	 */
-	public String addOr(String string1,String string2){
-		return "Or("+string1+","+string2+")";
-	}
-	
-	/**
-	 * 给字符串两边加And
-	 * @param string1
-	 * @param string2
-	 * @return And(string1,string2)
-	 */
-	public String addAnd(String string1,String string2){
-		return "And("+string1+","+string2+")";
-	}
-	
-	/**
-	 * 搜索多个id1是否RId为id2用该函数
-	 * @param id1
-	 * @param id2
-	 * @param resultJsonClass
-	 * @return [1,2],[2,3],或""
-	 */
-	public String searchIdArrayToRId(String id1,String id2,ResultJsonClass resultJsonClass){
-		String result ="";
-		
-		int searchResultEntitiesSize = resultJsonClass.entities.size();
-		int flag = 0;
-        Entities entitiesTemp;
-        String searchTemp="";
-    	for(int i = 0; i < searchResultEntitiesSize ; ++i)
-    	{
-//    		//System.out.println(i);
-    		entitiesTemp = resultJsonClass.entities.get(i);
-    		if(entitiesTemp.Id.equals(id1) || entitiesTemp.Id.equals(id2)) // 是id1或id2 排除，之前已经找过
-    			continue;
-    		
-    		if(flag == 0)
-    		{
-    			searchTemp = "Id="+entitiesTemp.Id;
-    			flag++;
-    		}
-    		else // 有两个以上entitiesTemp.Id,加Or
-    		{
-    			searchTemp = addOr(searchTemp, "Id="+entitiesTemp.Id);
-    			flag++;
-    		}
-    		if(flag == 70) // 足够长了，搜索一次
-    		{
-    	    	// 加And
-    	    	searchTemp = addAnd(searchTemp, "RId="+id2);
-    	    	// 设置expr
-    	    	apiuse.setExpr(searchTemp);
-    	    	// 发送请求
-    	    	ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
-    	    	// 处理结果
-    	    	int searchResultSize = searchResult.entities.size();
-    	    	for(int j = 0; j < searchResultSize; ++j)
-    	    	{
-    	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
-    	    	}
-    	    	flag = 0;
-    	    	searchTemp = "";
-    		}
-    	}
-
-    	if(flag != 0)	// 搜索最后一次
-    	{
-	    	// 加And
-	    	searchTemp = addAnd(searchTemp, "RId="+id2);
-	    	// 设置expr
-	    	apiuse.setExpr(searchTemp);
-	    	// 发送请求
-	    	ResultJsonClass searchResult = apiuse.HandleURI(apiuse.getURI());
-	    	// 处理结果
-	    	int searchResultSize = searchResult.entities.size();
-	    	for(int j = 0; j < searchResultSize; ++j)
-	    	{
-	    		result += "["+searchResult.entities.get(j).Id+","+id2+"],";
-	    	}
-    	}
-		return result;
 	}
 	
 	

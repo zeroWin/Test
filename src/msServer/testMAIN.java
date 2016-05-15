@@ -52,71 +52,110 @@ public class testMAIN {
 //	             }  
 //	         }  
 //	         System.out.println("getDiffrent5 total times "+(System.nanoTime()-st));  
-		long st = System.nanoTime(); 
-		for(int i = 0;i<1000000;++i)
-			concat1("123456789","","123456789","","123456789","123456789");
-		System.out.println("方式1时间： "+(System.nanoTime()-st));
+//		long st = System.nanoTime(); 
+//		for(int i = 0;i<1000000;++i)
+//			concat1("123456789","","123456789","","123456789","123456789");
+//		System.out.println("方式1时间： "+(System.nanoTime()-st));
+//		
+//		
+//		st = System.nanoTime(); 
+//		for(int i = 0;i<1000000;++i)
+//			concat2("123456789","123456789","","123456789","","123456789");
+//		System.out.println("方式2时间： "+(System.nanoTime()-st));
+//		
+//		
+//		st = System.nanoTime(); 
+//		for(int i = 0;i<1000000;++i)
+//			concat3("123456789","123456789","","123456789","","123456789");
+//		System.out.println("方式3时间： "+(System.nanoTime()-st));
+//		
+//		
+//		st = System.nanoTime(); 
+//		for(int i = 0;i<1000000;++i)
+//			concat4("123456789","123456789","","123456789","","123456789");
+//		System.out.println("方式4时间： "+(System.nanoTime()-st));
+//		
+//		st = System.nanoTime(); 
+//		for(int i = 0;i<1000000;++i)
+//			concat5("12345678900","123456789","","","","");
+//		System.out.println("方式5时间： "+(System.nanoTime()-st));
+////		concat5("123", "", "", "213" ,"df", "");
+//	
+//		st = System.nanoTime(); 
+//		StringBuilder str = new StringBuilder();
+//		for(int i = 0;i<1000000;++i)
+//			str.append("213123123").append("123").append("21321312").append("2131");
+//		System.out.println("方式xxx时间： "+(System.nanoTime()-st));
+//	//	String result = "";
+//		String test = null;
+//		System.out.println(test);
+//		st = System.nanoTime(); 
+//		for(int i = 0;i<1000000;++i)
+//		{
+//			String result = null;
+//
+//			result = concat5("123456","123123124","","","","");
+//		}
+//		System.out.println("方式7时间： "+(System.nanoTime()-st));
+//		
+//		String str1 = "2132131232134";
+//		String str2 = "123213213123";
+//		st = System.nanoTime();
+//		for(int i = 0;i<1000000;++i)
+//		{
+//			str1.equals(str2);
+//		}
+//		System.out.println("字符串相等时间： "+(System.nanoTime()-st));
+//		
+//		
+//		StringBuilder stringTemp = new StringBuilder();
+//		if(stringTemp.toString().equals(""))
+//		System.out.println(123);
+//		
+//		st = System.nanoTime(); 
+//			System.out.println("显示一下是多长时间呢");
+//		System.out.println("方式3时间： "+(System.nanoTime()-st));
 		
+//		String string1 = "1";
+//		String string2 = "1";
+//		String string3 = "1";
+//	      List<String> list1 = new ArrayList<String>();  
+//	      List<String> list2 = new ArrayList<String>();  
+//	         
+//	      for (int i = 0; i < 10000; i++) {  
+//	            list1.add("test"+i);  
+//	            list2.add("test"+i*2);  
+//	      } 
+//	      
+//	      long st = System.nanoTime();
+//	      testFunction(string1,string2,string3,list1,list2);
+//	      System.out.println("调用函数本身时间： "+(System.nanoTime()-st));
 		
-		st = System.nanoTime(); 
-		for(int i = 0;i<1000000;++i)
-			concat2("123456789","123456789","","123456789","","123456789");
-		System.out.println("方式2时间： "+(System.nanoTime()-st));
-		
-		
-		st = System.nanoTime(); 
-		for(int i = 0;i<1000000;++i)
-			concat3("123456789","123456789","","123456789","","123456789");
-		System.out.println("方式3时间： "+(System.nanoTime()-st));
-		
-		
-		st = System.nanoTime(); 
-		for(int i = 0;i<1000000;++i)
-			concat4("123456789","123456789","","123456789","","123456789");
-		System.out.println("方式4时间： "+(System.nanoTime()-st));
-		
-		st = System.nanoTime(); 
-		for(int i = 0;i<1000000;++i)
-			concat5("12345678900","123456789","","","","");
-		System.out.println("方式5时间： "+(System.nanoTime()-st));
-//		concat5("123", "", "", "213" ,"df", "");
-	
-		st = System.nanoTime(); 
-		StringBuilder str = new StringBuilder();
-		for(int i = 0;i<1000000;++i)
-			str.append("213123123").append("123").append("21321312").append("2131");
-		System.out.println("方式xxx时间： "+(System.nanoTime()-st));
-	//	String result = "";
-		String test = null;
-		System.out.println(test);
-		st = System.nanoTime(); 
-		for(int i = 0;i<1000000;++i)
+		// 测试设置中间变量调用函数
+		long st = System.nanoTime();
+		for(int i=0 ; i<5 ; ++i)
 		{
-			String result = null;
-
-			result = concat5("123456","123123124","","","","");
+			String temp1 = concat1("","","","","","");
+			String temp2 = concat1("","","","","","");
+			String temp3 = concat1("","","","","","");
+			String temp4 = concat1("","","","","","");
+			String temp5 = concat1("","","","","","");
+			String temp6 = concat1("","","","","","");
+			concat1(temp1,temp2,temp3,temp4,temp5,temp6);
 		}
-		System.out.println("方式7时间： "+(System.nanoTime()-st));
+		System.out.println("设置中间量速度： "+(System.nanoTime()-st));
 		
-		String str1 = "2132131232134";
-		String str2 = "123213213123";
 		st = System.nanoTime();
-		for(int i = 0;i<1000000;++i)
+		for(int i=0 ; i<5 ; ++i)
 		{
-			str1.equals(str2);
+			concat1(concat1("","","","","",""),concat1("","","","","",""),concat1("","","","","",""),concat1("","","","","",""),concat1("","","","","",""),concat1("","","","","",""));
 		}
-		System.out.println("字符串相等时间： "+(System.nanoTime()-st));
-		
-		
-		StringBuilder stringTemp = new StringBuilder();
-		if(stringTemp.toString().equals(""))
-		System.out.println(123);
-		
-		st = System.nanoTime(); 
-			System.out.println("显示一下是多长时间呢");
-		System.out.println("方式3时间： "+(System.nanoTime()-st));
+		System.out.println("不舍中间量速度： "+(System.nanoTime()-st));
 	}
 	
+	public static void testFunction(String s1, String s2, String s3,List<String> list1,List<String> list2)
+	{
+	}
 	public static String concat1(String s1, String s2, String s3, String s4, String s5, String s6) {
         String result = "";
         result += s1;

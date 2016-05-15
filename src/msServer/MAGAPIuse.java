@@ -73,22 +73,39 @@ public class MAGAPIuse
          //apiUse.setExpr("Id=2332023333");
          //apiUse.setExpr("And(Composite(AA.AuId=57898110),Composite(AA.AuId=2014261844))");
          //apiUse.setExpr("Composite(AA.AuId=2251253715)");
-         apiUse.setExpr("Or(Composite(AA.AuId=2251253715),Id=2251253715)");
+         apiUse.setExpr("Composite(AA.AuId=2251253715)");
          //apiUse.setExpr("Id=2180737804");
-         apiUse.setAttributes("AA.AfId");
+         apiUse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
+         long st = System.nanoTime();
          searchResult = apiUse.HandleURI(apiUse.getURI());
+         System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));
+         
+         st = System.nanoTime();
+         apiUse.setExpr("RId=2140251882");
+         searchResult = apiUse.HandleURI(apiUse.getURI());
+         System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));
+    
+         st = System.nanoTime();
+         apiUse.setExpr("Id=2310280492");
+         searchResult = apiUse.HandleURI(apiUse.getURI());
+         System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));   
+         
+         st = System.nanoTime();
+         apiUse.setExpr("Or(Or(Composite(AA.AuId=2251253715),RId=2140251882),RId=2310280492)");
+         searchResult = apiUse.HandleURI(apiUse.getURI());
+         System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));  
          // 显示结果
         // apiUse.showResultAsJsonFormat(searchResult);             
          // 直接通过searchResult获取结果的方法
-         System.out.println("Or(Composite(AA.AuId=".length()+"),Id=".length()+")".length());
-         System.out.println(searchResult.entities.size());
-         System.out.println(searchResult.expr);
-         System.out.println(searchResult.entities.get(0).logprob);
-         System.out.println(searchResult.entities.get(0).Id);
-         System.out.println(searchResult.entities.get(0).RId.get(1));
-         System.out.println(searchResult.entities.get(0).AA.get(0).AfId);
-         System.out.println(searchResult.entities.get(0).C.CId);
-         System.out.println(searchResult.entities.get(0).J.JId);
+//         System.out.println("Or(Composite(AA.AuId=".length()+"),Id=".length()+")".length());
+//         System.out.println(searchResult.entities.size());
+//         System.out.println(searchResult.expr);
+//         System.out.println(searchResult.entities.get(0).logprob);
+//         System.out.println(searchResult.entities.get(0).Id);
+//         System.out.println(searchResult.entities.get(0).RId.get(1));
+//         System.out.println(searchResult.entities.get(0).AA.get(0).AfId);
+//         System.out.println(searchResult.entities.get(0).C.CId);
+//         System.out.println(searchResult.entities.get(0).J.JId);
 
  
          // 也可通过函数获取各个参数
