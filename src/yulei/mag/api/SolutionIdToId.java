@@ -114,10 +114,10 @@ public final class SolutionIdToId {
 //					.append("[").append(id1).append(",").append(EntitiesId1.J.JId).append(",")
 //					.append(id2).append("],");
 //			result.append(temp);
+			//System.out.println(temp);
 			result.append(new StringBuilder(5+EntitiesId1.J.JId.length()+id1Length+id2Length)
 					.append("[").append(id1).append(",").append(EntitiesId1.J.JId).append(",")
 					.append(id2).append("],"));
-			//System.out.println(temp);
 		}	
 		
 		// 判断CID 会议 规则4，5
@@ -128,10 +128,10 @@ public final class SolutionIdToId {
 //					.append("[").append(id1).append(",").append(EntitiesId1.C.CId).append(",")
 //					.append(id2).append("],");
 //			result.append(temp);
+			//System.out.println(temp);
 			result.append(new StringBuilder(5+EntitiesId1.C.CId.length()+id1Length+id2Length)
 					.append("[").append(id1).append(",").append(EntitiesId1.C.CId).append(",")
 					.append(id2).append("],"));
-			//System.out.println(temp);
 		}
 		
 		// 判断FId 领域 规则2，3
@@ -235,7 +235,7 @@ public final class SolutionIdToId {
 		
 		for(Author author : minList){
 			if(map.get(author.AuId) != null){ // 找到了
-				result.append("[").append(id1).append(",").append(author.AuId).append(",").append("],");
+				result.append("[").append(id1).append(",").append(author.AuId).append(",").append(id2).append("],");
 			}
 		}
 		
@@ -314,6 +314,7 @@ public final class SolutionIdToId {
 		StringBuilder result = new StringBuilder();
 		int PaperRefId2Num = PaperRefId2.size();
 		// 1.id1->id1.RId 找所有id1.RId到id2的2跳路径
+		
 		if(EntitiesId1.RId != null && EntitiesId1.RId.size() != 0)
 		{
 			result.append(IdToId_3Hop_Rule1(id1,id2,EntitiesId1.RId,EntitiesId2,PaperRefId2));
@@ -372,6 +373,7 @@ public final class SolutionIdToId {
 		apiuse.setAttributes("Id,C.CId,F.FId,J.JId,AA.AuId,RId");
 		for(String Id1RId: ID1_RIdlist) // 遍历每一个RId
 		{
+			//System.out.println(Id1RId);
 			if(flag == 0)
 			{
 				expr.append("Id=").append(Id1RId);
@@ -383,21 +385,23 @@ public final class SolutionIdToId {
 				.append(Id1RId).append(")");
 				flag++;
 			}
-			if(flag == 50) // 足够长了，搜索一次
+			if(flag == 65) // 足够长了，搜索一次
 			{
 				apiuse.setExpr(expr.toString());
 				searchResult = apiuse.HandleURI(apiuse.getURI());
 				searchEntities = searchResult.entities;
-				//if(searchEntities.size() != flag)
-					//System.out.println("注意了：这里的Or搜索有问题,结果个数和设定个数对不上！！！！！！");
+//				if(searchEntities.size() != flag)
+//					System.out.println("注意了：这里的Or搜索有问题,结果个数和设定个数对不上！！！！！！");
 				
 				
 				for(Entities entities : searchEntities)	// 对搜索到的每一个论文找2跳路径
 				{
-					//System.out.println("tttttt"+entities.Id);
+//					System.out.println("tttttt"+entities.Id);
 					// 返回结果是[RId,X,id2],
 					result.append(IdToId_2HopForRule1(id1,entities.Id, id2, entities, EntitiesId2, PaperRefId2));
 				}
+				//System.out.println(result);
+				expr = new StringBuilder();
 				flag = 0;
 			}
 		}
@@ -413,12 +417,12 @@ public final class SolutionIdToId {
 			
 			for(Entities entities : searchEntities)	// 对搜索到的每一个论文找2跳路径
 			{
-				//System.out.println("tttttt"+entities.Id);
+//				System.out.println("tttttt"+entities.Id);
 				// 返回结果是[RId,X,id2],
 				result.append(IdToId_2HopForRule1(id1,entities.Id, id2, entities, EntitiesId2, PaperRefId2));
 			}			
 		}		
-//		System.out.println("3-Hop-Rule1 end and total times ："+(System.nanoTime()-st));	
+		//System.out.println("3-Hop-Rule1 end and total times ："+(System.nanoTime()-st));	
 		return result.toString();
 	}
 	
@@ -556,7 +560,7 @@ public final class SolutionIdToId {
 		
 		for(Author author : minList){
 			if(map.get(author.AuId) != null){ // 找到了
-				result.append("[").append(trueId1).append(",").append(id1).append(",").append(author.AuId).append(",").append("],");
+				result.append("[").append(trueId1).append(",").append(id1).append(",").append(author.AuId).append(",").append(id2).append("],");
 			}
 		}
 		

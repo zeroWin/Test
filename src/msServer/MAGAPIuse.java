@@ -73,7 +73,7 @@ public class MAGAPIuse
          //apiUse.setExpr("Id=2332023333");
          //apiUse.setExpr("And(Composite(AA.AuId=57898110),Composite(AA.AuId=2014261844))");
          //apiUse.setExpr("Composite(AA.AuId=2251253715)");
-         apiUse.setExpr("Composite(AA.AuId=2251253715)");
+         apiUse.setExpr("Composite(AA.AuId=2087938929)");
          //apiUse.setExpr("Id=2180737804");
          apiUse.setAttributes("Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId");
          long st = System.nanoTime();
@@ -82,16 +82,16 @@ public class MAGAPIuse
          
          st = System.nanoTime();
          apiUse.setExpr("RId=2140251882");
-         searchResult = apiUse.HandleURI(apiUse.getURI());
+  //       searchResult = apiUse.HandleURI(apiUse.getURI());
          System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));
     
          st = System.nanoTime();
          apiUse.setExpr("Id=2310280492");
-         searchResult = apiUse.HandleURI(apiUse.getURI());
+  //       searchResult = apiUse.HandleURI(apiUse.getURI());
          System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));   
          
          st = System.nanoTime();
-         apiUse.setExpr("Or(Or(Composite(AA.AuId=2251253715),RId=2140251882),RId=2310280492)");
+         apiUse.setExpr("RId=7199943");
          searchResult = apiUse.HandleURI(apiUse.getURI());
          System.out.println("返回条数"+searchResult.entities.size()+"搜索时间 times ："+(System.nanoTime()-st));  
          // 显示结果

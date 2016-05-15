@@ -112,19 +112,21 @@ public final class APIuse {
 			// 发送http请求
 //			long st1 = System.nanoTime();
 //			HttpGet request = new HttpGet(uri);
-//
+////
 //			this.response = this.httpclient.execute(request);
-			response = httpclient.execute(new HttpGet(uri));
+//			
 //	        HttpEntity entity = this.response.getEntity();
 //	        
-////	        System.out.println("搜索 total times :"+(System.nanoTime()-st1));
-////	        st1 = System.nanoTime();
+//////	        System.out.println("搜索 total times :"+(System.nanoTime()-st1));
+//////	        st1 = System.nanoTime();
 //	        if (entity != null) 
 //	        {
 //	        	 String result = EntityUtils.toString(entity);
-////	        	 System.out.println(result);
+//	        	 System.out.println(result);
 //	        	 searchResult = gson.fromJson(result, ResultJsonClass.class);
 //	        }
+			
+			response = httpclient.execute(new HttpGet(uri));
 			searchResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ResultJsonClass.class);
 //	        System.out.println("字符串转换 total times :"+(System.nanoTime()-st1));
 		}

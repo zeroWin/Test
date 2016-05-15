@@ -460,7 +460,7 @@ public final class SolutionIdToAuId {
 						.append(Id1RId).append(")");
 					flag++;
 				}
-				if(flag == 50) // 足够长了，搜索一次
+				if(flag == 65) // 足够长了，搜索一次
 				{
 					apiuse.setExpr(expr.toString());
 					searchResult = apiuse.HandleURI(apiuse.getURI());
@@ -480,6 +480,7 @@ public final class SolutionIdToAuId {
 									.append(AuId2).append("],");
 						}
 					}
+					expr = new StringBuilder();
 					flag = 0;
 				}
 			}
